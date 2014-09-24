@@ -55,6 +55,11 @@
             <span class="p">]</span>
         <span class="p">},</span>
     <span class="p">},</span>
+    <span class="nx">colors</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">header</span><span class="o">:</span> <span class="s1">'#ff6600'</span><span class="p">,</span>
+        <span class="nx">body</span><span class="o">:</span> <span class="s1">'#0a0'</span><span class="p">,</span>
+        <span class="nx">footer</span><span class="o">:</span> <span class="s1">'1232ai'</span>
+    <span class="p">},</span>
     <span class="nx">api</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">book</span><span class="o">:</span> <span class="p">{</span>
             <span class="nx">getCosts</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
@@ -115,6 +120,23 @@
     <span class="s1">'align.vertical.y'</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">STRING</span><span class="p">,</span>
     <span class="nx">src</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">STRING</span><span class="p">,</span>
     <span class="nx">ratios</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">ARRAY</span>
+<span class="p">});</span>
+<span class="c1">// true</span>
+</pre></div>
+
+<ul>
+<li>validate(object, map)</li>
+</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">valid</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">validate</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s1">'media.align'</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">vertical</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">x</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">STRING</span><span class="p">,</span>
+            <span class="nx">y</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">NUMBER</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">colors</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">header</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">HEX</span>
+    <span class="p">},</span>
+    <span class="s1">'api.book.getEan'</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">FUNCTION</span>
 <span class="p">});</span>
 <span class="c1">// true</span>
 </pre></div>
