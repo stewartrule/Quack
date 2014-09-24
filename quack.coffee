@@ -32,8 +32,6 @@ window.quack = do ->
 
     types = validator.types
 
-    dot = '.'
-
     hasApi = (obj, methods) ->
         _.all methods, (method) ->
             _.has(obj, method) && _.isFunction(obj[method])
@@ -41,10 +39,15 @@ window.quack = do ->
     hasObject = (parent, key) ->
         _.has(parent, key) && _.isObject(parent[key])
 
+    dot = '.'
+
+    hasDot = (str) ->
+        str && str.indexOf(dot) > -1
+
     get = (parent, path) ->
         unless path
             return null
-        if path.indexOf(dot) > -1
+        if hasDot(path)
             path = path.split(dot)
             initial = _.initial(path)
             last = _.last(path)
@@ -62,7 +65,7 @@ window.quack = do ->
         null
 
     set = (parent, path, val) ->
-        if path && path.indexOf(dot) > -1
+        if hasDot(path)
             path = path.split(dot)
             initial = _.initial(path)
             last = _.last(path)

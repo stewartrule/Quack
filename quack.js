@@ -2,7 +2,7 @@
 (function() {
 
   window.quack = (function() {
-    var api, clone, dot, get, has, hasApi, hasObject, set, test, types, validate, validator;
+    var api, clone, dot, get, has, hasApi, hasDot, hasObject, set, test, types, validate, validator;
     validator = (function() {
       var api, delegate, regexp;
       api = {};
@@ -31,7 +31,6 @@
       return api;
     })();
     types = validator.types;
-    dot = '.';
     hasApi = function(obj, methods) {
       return _.all(methods, function(method) {
         return _.has(obj, method) && _.isFunction(obj[method]);
@@ -40,12 +39,16 @@
     hasObject = function(parent, key) {
       return _.has(parent, key) && _.isObject(parent[key]);
     };
+    dot = '.';
+    hasDot = function(str) {
+      return str && str.indexOf(dot) > -1;
+    };
     get = function(parent, path) {
       var initial, key, last, _i, _len;
       if (!path) {
         return null;
       }
-      if (path.indexOf(dot) > -1) {
+      if (hasDot(path)) {
         path = path.split(dot);
         initial = _.initial(path);
         last = _.last(path);
@@ -68,7 +71,7 @@
     };
     set = function(parent, path, val) {
       var initial, key, last, _i, _len;
-      if (path && path.indexOf(dot) > -1) {
+      if (hasDot(path)) {
         path = path.split(dot);
         initial = _.initial(path);
         last = _.last(path);
