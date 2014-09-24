@@ -16,13 +16,9 @@
 * isSlug(parent, path)
 * isString(parent, path)
 * isZipcode(parent, path)
-
 * test(parent, path, regExp)
-
 * validate(parent, path, map)
-
 * hasApi(parent, path, methods)
-
 * set(parent, path, val)
 * get(parent, path)
 * clone(parent, src, dest)
