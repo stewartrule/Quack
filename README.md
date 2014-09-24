@@ -131,4 +131,14 @@ var res = quack.get(config, 'x.y.z');
 * clone(object, src, dest)
 
 
+### Validator
+
+```js
+var validator = quack.validator;
+
+validator.isEmail('walter@angrybytes.com');
+validator.isHex('#ff6600');
+validator.isZipcode('1211AB');
+```
+
 
