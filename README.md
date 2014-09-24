@@ -1,6 +1,7 @@
 
 
 
+### Api
 
 * isArray(parent, path)
 * isBoolean(parent, path)
@@ -23,12 +24,17 @@
 * get(parent, path)
 * clone(parent, src, dest)
 
+### Example
+
 ```js
-
 var hasCss = quack.test(config, 'resources.css.files.1', /^app([a-z0-9\._\-]+)css$/);
-
-ar valid = quack.isEmail(config, 'user.email');
-
-
-
 ```
+
+```js
+var valid = quack.isEmail(config, 'user.email');
+```
+
+```js
+var hasApi = quack.hasApi(config, 'api.book', ['getCosts', 'getTitle', 'getEan']);
+```
+
