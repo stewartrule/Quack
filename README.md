@@ -1,33 +1,61 @@
 
+#### Considering this dummy object
+```js
+var config = {
+    resources: {
+        css: {
+            base: '/static/css/',
+            files: [
+                'media-element.min.css',
+                'app.combined.min.css'
+            ]
+        },
+    },
+    api: {
+        book: {
+            getCosts: function () {},
+            getTitle: function () {},
+            getEan: function () {}
+        }
+    },
+    user: {
+        name: 'Wallie',
+        email: 'walter@angrybytes.com',
+        zipcode: '1211BL'
+    },
+    version: 1.2,
+    dev: 'production'
+};
 
 
+```
 ### Type checking
 
-* isArray(parent, path)
-* isBoolean(parent, path)
-* isDate(parent, path)
-* isElement(parent, path)
-* isFunction(parent, path)
-* isNumber(parent, path)
-* isObject(parent, path)
-* isRegExp(parent, path)
+* isArray(object, path)
+* isBoolean(object, path)
+* isDate(object, path)
+* isElement(object, path)
+* isFunction(object, path)
+* isNumber(object, path)
+* isObject(object, path)
+* isRegExp(object, path)
 
 ### Pattern checking
-* isEmail(parent, path)
+* isEmail(object, path)
 
 ```js
 var valid = quack.isEmail(config, 'user.email');
 ```
 
-* isHex(parent, path)
-* isIp(parent, path)
-* isSlug(parent, path)
-* isString(parent, path)
-* isZipcode(parent, path)
+* isHex(object, path)
+* isIp(object, path)
+* isSlug(object, path)
+* isString(object, path)
+* isZipcode(object, path)
 
 
 ### Multiple fields
-* validate(parent, path, map)
+* validate(object, path, map)
 
 ```js
 var valid = quack.validate(config, 'media', {
@@ -38,7 +66,7 @@ var valid = quack.validate(config, 'media', {
 ```
 ### Custom regexp
 
-* test(parent, path, regExp)
+* test(object, path, regExp)
 
 ```js
 var match = quack.test(config, 'resources.css.files.1', /^app([a-z0-9\._\-]+)css$/);
@@ -46,7 +74,7 @@ var match = quack.test(config, 'resources.css.files.1', /^app([a-z0-9\._\-]+)css
 
 ### Api check
 
-* hasApi(parent, path, methods)
+* hasApi(object, path, methods)
 
 ```js
 var hasApi = quack.hasApi(config, 'api.book', ['getCosts', 'getTitle', 'getEan']);
@@ -54,18 +82,19 @@ var hasApi = quack.hasApi(config, 'api.book', ['getCosts', 'getTitle', 'getEan']
 
 ### Get nested property
 
-* get(parent, path)
+* get(object, path)
 
 ```js
+var name = '';
 if (quack.isString(config, 'user.name')) {
-    var name = quack.get(config, 'user.name');
+    name = quack.get(config, 'user.name');
 }
 ```
 
 ### Manipulate
 
-* set(parent, path, val)
-* clone(parent, src, dest)
+* set(object, path, val)
+* clone(object, src, dest)
 
 
 
