@@ -177,6 +177,15 @@
 <span class="c1">// true</span>
 </pre></div>
 
+<div class="highlight highlight-js"><pre><span class="kd">function</span> <span class="nx">orderableProduct</span><span class="p">(</span><span class="nx">instance</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">hasApi</span><span class="p">(</span><span class="nx">instance</span><span class="p">,</span> <span class="p">[</span><span class="s1">'order'</span><span class="p">,</span> <span class="s1">'getProductId'</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">orderableProduct</span><span class="p">(</span><span class="nx">something</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">something</span><span class="p">.</span><span class="nx">order</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+
 <h3>
 <a name="get-nested-property" class="anchor" href="#get-nested-property"><span class="octicon octicon-link"></span></a>Get nested property</h3>
 
