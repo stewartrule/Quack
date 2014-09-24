@@ -7,7 +7,9 @@
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -17,10 +19,7 @@
       <header>
         <h1>Quack</h1>
         <p>validate object paths and values</p>
-
         <p class="view"><a href="https://github.com/stewartrule/quack">View the Project on GitHub <small>stewartrule/quack</small></a></p>
-
-
         <ul>
           <li><a href="https://github.com/stewartrule/quack/zipball/master">Download <strong>ZIP File</strong></a></li>
           <li><a href="https://github.com/stewartrule/quack/tarball/master">Download <strong>TAR Ball</strong></a></li>
@@ -64,7 +63,7 @@
     <span class="p">},</span>
     <span class="nx">user</span><span class="o">:</span> <span class="p">{</span>
         <span class="nx">name</span><span class="o">:</span> <span class="s1">'Wallie'</span><span class="p">,</span>
-        <span class="nx">email</span><span class="o">:</span> <span class="s1">'walter@angrybytes.com'</span><span class="p">,</span>
+        <span class="nx">email</span><span class="o">:</span> <span class="s1">'foobar@baz.com'</span><span class="p">,</span>
         <span class="nx">zipcode</span><span class="o">:</span> <span class="s1">'1211BL'</span>
     <span class="p">},</span>
     <span class="nx">version</span><span class="o">:</span> <span class="mf">1.2</span><span class="p">,</span>
@@ -171,17 +170,17 @@
 
 <div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">validator</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">validator</span><span class="p">;</span>
 
-<span class="nx">validator</span><span class="p">.</span><span class="nx">isEmail</span><span class="p">(</span><span class="s1">'walter@angrybytes.com'</span><span class="p">);</span>
+<span class="nx">validator</span><span class="p">.</span><span class="nx">isEmail</span><span class="p">(</span><span class="s1">'foobar@baz.com'</span><span class="p">);</span>
 <span class="nx">validator</span><span class="p">.</span><span class="nx">isHex</span><span class="p">(</span><span class="s1">'#ff6600'</span><span class="p">);</span>
 <span class="nx">validator</span><span class="p">.</span><span class="nx">isZipcode</span><span class="p">(</span><span class="s1">'1211AB'</span><span class="p">);</span>
 </pre></div>
       </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/stewartrule">stewartrule</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/stewartrule">stewartrule</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
   </body>
 </html>
