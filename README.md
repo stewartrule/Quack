@@ -26,8 +26,6 @@ var config = {
     version: 1.2,
     dev: 'production'
 };
-
-
 ```
 ### Type checking
 
@@ -40,19 +38,23 @@ var config = {
 * isObject(object, path)
 * isRegExp(object, path)
 
-### Pattern checking
-* isEmail(object, path)
-
 ```js
-var valid = quack.isEmail(config, 'user.email');
+var res = quack.isNumber(config, 'resources.js.files');
+// false
 ```
 
+### Pattern checking
+
+* isEmail(object, path)
 * isHex(object, path)
 * isIp(object, path)
 * isSlug(object, path)
 * isString(object, path)
 * isZipcode(object, path)
 
+```js
+var valid = quack.isEmail(config, 'user.email');
+```
 
 ### Multiple fields
 * validate(object, path, map)
@@ -94,6 +96,12 @@ if (quack.isString(config, 'user.name')) {
 ### Manipulate
 
 * set(object, path, val)
+```js
+quack.set(config, 'x.y.z', 'alphabet soup');
+var res = quack.get(config, 'x.y.z');
+// 'alphabet soup'
+```
+
 * clone(object, src, dest)
 
 
