@@ -23,3 +23,12 @@
 * get(parent, path)
 * clone(parent, src, dest)
 
+```js
+
+var hasCss = quack.test(config, 'resources.css.files.1', /^app([a-z0-9\._\-]+)css$/);
+
+ar valid = quack.isEmail(config, 'user.email');
+
+
+
+```
