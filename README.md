@@ -2,6 +2,20 @@
 #### Considering this dummy object
 ```js
 var config = {
+    media: {
+        align: {
+            vertical: {
+                x: 'center',
+                y: 'top'
+            },
+            horizontal: {
+                x: 'center',
+                y: 'top'
+            }
+        },
+        src: '/base/media/image/',
+        ratios: [1, 2, 3, 4, 5, 6]
+    },
     resources: {
         css: {
             base: '/static/css/',
@@ -54,6 +68,7 @@ var res = quack.isNumber(config, 'resources.js.files');
 
 ```js
 var valid = quack.isEmail(config, 'user.email');
+// true
 ```
 
 ### Multiple fields
@@ -65,6 +80,7 @@ var valid = quack.validate(config, 'media', {
     src: quack.STRING,
     ratios: quack.ARRAY
 });
+// true
 ```
 ### Custom regexp
 
@@ -72,6 +88,7 @@ var valid = quack.validate(config, 'media', {
 
 ```js
 var match = quack.test(config, 'resources.css.files.1', /^app([a-z0-9\._\-]+)css$/);
+// true
 ```
 
 ### Api check
@@ -80,6 +97,7 @@ var match = quack.test(config, 'resources.css.files.1', /^app([a-z0-9\._\-]+)css
 
 ```js
 var hasApi = quack.hasApi(config, 'api.book', ['getCosts', 'getTitle', 'getEan']);
+// true
 ```
 
 ### Get nested property
