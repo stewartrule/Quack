@@ -27,7 +27,7 @@
 ### Example
 
 ```js
-var hasCss = quack.test(config, 'resources.css.files.1', /^app([a-z0-9\._\-]+)css$/);
+var match = quack.test(config, 'resources.css.files.1', /^app([a-z0-9\._\-]+)css$/);
 ```
 
 ```js
