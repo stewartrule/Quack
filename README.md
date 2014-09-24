@@ -94,9 +94,17 @@ var match = quack.test(config, 'resources.css.files.1', /^app([a-z0-9\._\-]+)css
 ### Api check
 
 * hasApi(object, path, methods)
+* hasApi(object, methods)
 
 ```js
 var hasApi = quack.hasApi(config, 'api.book', ['getCosts', 'getTitle', 'getEan']);
+// true
+```
+
+or
+
+```js
+var hasApi = quack.hasApi(config.api.book, ['getCosts', 'getTitle', 'getEan']);
 // true
 ```
 
