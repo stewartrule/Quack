@@ -80,6 +80,7 @@ var valid = quack.isEmail(config, 'user.email');
 ```js
 var valid = quack.validate(config, 'media', {
     align: quack.OBJECT,
+    'align.vertical.y': quack.STRING,
     src: quack.STRING,
     ratios: quack.ARRAY
 });

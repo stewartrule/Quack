@@ -55,6 +55,7 @@
     };
 
 
+
     describe('regex test', function () {
 
         it("the second css file path ('resources.css.files.1') should start with 'app' and end with '.css'", function () {
@@ -108,6 +109,7 @@
 
             var valid = quack.validate(config, 'media', {
                 align: quack.OBJECT,
+                'align.vertical.y': quack.STRING,
                 src: quack.STRING,
                 ratios: quack.ARRAY
             });

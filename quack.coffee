@@ -51,12 +51,10 @@ window.quack = do ->
             path = path.split(dot)
             initial = _.initial(path)
             last = _.last(path)
-
             for key in initial
                 unless hasObject(parent, key)
                     return null
                 parent = parent[key]
-
             if _.has(parent, last)
                 return parent[last]
             return null
@@ -111,7 +109,6 @@ window.quack = do ->
         if api.isObject(parent, path)
             obj = api.get(parent, path)
             return hasApi(obj, methods)
-
         return false
 
     api.validator = validator
@@ -124,7 +121,7 @@ window.quack = do ->
             unless _.contains(types, type)
                 throw new Error('Unknown validation type')
             fn = 'is' + type
-            _.has(obj, key) && validator[fn](obj[key])
+            has(obj, key, fn)
 
     api.validate = (parent, path, map) ->
         nested = get(parent, path)

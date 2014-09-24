@@ -149,7 +149,7 @@
           throw new Error('Unknown validation type');
         }
         fn = 'is' + type;
-        return _.has(obj, key) && validator[fn](obj[key]);
+        return has(obj, key, fn);
       });
     };
     api.validate = function(parent, path, map) {
