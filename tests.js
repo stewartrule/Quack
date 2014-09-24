@@ -47,7 +47,7 @@
         },
         user: {
             name: 'Wallie',
-            email: 'walter@angrybytes.com',
+            email: 'foobar@baz.com',
             zipcode: '1211BL'
         },
         version: 1.2,

@@ -139,7 +139,7 @@ var res = quack.get(config, 'x.y.z');
 ```js
 var validator = quack.validator;
 
-validator.isEmail('walter@angrybytes.com');
+validator.isEmail('foobar@baz.com');
 validator.isHex('#ff6600');
 validator.isZipcode('1211AB');
 ```
