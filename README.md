@@ -91,7 +91,11 @@ var valid = quack.validate(config, 'media', {
 * test(object, path, regExp)
 
 ```js
-var match = quack.test(config, 'resources.css.files.1', /^app([a-z0-9\._\-]+)css$/);
+var match = quack.test(
+    config,
+    'resources.css.files.1',
+    /^app([a-z0-9\._\-]+)css$/
+);
 // true
 ```
 
@@ -101,14 +105,21 @@ var match = quack.test(config, 'resources.css.files.1', /^app([a-z0-9\._\-]+)css
 * hasApi(object, methods)
 
 ```js
-var hasApi = quack.hasApi(config, 'api.book', ['getCosts', 'getTitle', 'getEan']);
+var hasApi = quack.hasApi(
+    config,
+    'api.book',
+    ['getCosts', 'getTitle', 'getEan']
+);
 // true
 ```
 
 or
 
 ```js
-var hasApi = quack.hasApi(config.api.book, ['getCosts', 'getTitle', 'getEan']);
+var hasApi = quack.hasApi(
+    config.api.book,
+    ['getCosts', 'getTitle', 'getEan']
+);
 // true
 ```
 
