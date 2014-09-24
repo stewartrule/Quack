@@ -55,6 +55,9 @@ var config = {
 ```js
 var res = quack.isNumber(config, 'resources.js.files');
 // false
+
+var res = quack.isArray(config, 'resources.js.files');
+// true
 ```
 
 ### Pattern checking
