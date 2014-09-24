@@ -25,6 +25,11 @@ var config = {
             ]
         },
     },
+    colors: {
+        header: '#ff6600',
+        body: '#0a0',
+        footer: '1232ai'
+    },
     api: {
         book: {
             getCosts: function () {},
@@ -86,6 +91,25 @@ var valid = quack.validate(config, 'media', {
 });
 // true
 ```
+* validate(object, map)
+
+```js
+var valid = quack.validate(config, {
+    'media.align': {
+        vertical: {
+            x: quack.STRING,
+            y: quack.NUMBER
+        }
+    },
+    colors: {
+        header: quack.HEX
+    },
+    'api.book.getEan': quack.FUNCTION
+});
+// true
+```
+
+
 ### Custom regexp
 
 * test(object, path, regExp)

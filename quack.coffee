@@ -118,12 +118,17 @@ window.quack = do ->
 
     validate = (obj, map) ->
         _.all map, (type, key) ->
+            if _.isObject(type)
+                nested = get(obj, key)
+                return nested && validate(nested, type)
             unless _.contains(types, type)
                 throw new Error('Unknown validation type')
             fn = 'is' + type
             has(obj, key, fn)
 
     api.validate = (parent, path, map) ->
+        if _.isObject(path)
+            return validate(parent, path)
         nested = get(parent, path)
         nested && validate(nested, map)
 

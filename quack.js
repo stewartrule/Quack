@@ -144,7 +144,11 @@
     });
     validate = function(obj, map) {
       return _.all(map, function(type, key) {
-        var fn;
+        var fn, nested;
+        if (_.isObject(type)) {
+          nested = get(obj, key);
+          return nested && validate(nested, type);
+        }
         if (!_.contains(types, type)) {
           throw new Error('Unknown validation type');
         }
@@ -154,6 +158,9 @@
     };
     api.validate = function(parent, path, map) {
       var nested;
+      if (_.isObject(path)) {
+        return validate(parent, path);
+      }
       nested = get(parent, path);
       return nested && validate(nested, map);
     };

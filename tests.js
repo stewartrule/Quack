@@ -7,11 +7,11 @@
             align: {
                 vertical: {
                     x: 'center',
-                    y: 'top'
+                    y: 50
                 },
                 horizontal: {
                     x: 'center',
-                    y: 'top'
+                    y: 100
                 }
             },
             src: '/base/media/image/',
@@ -53,8 +53,6 @@
         version: 1.2,
         dev: 'production'
     };
-
-
 
     describe('regex test', function () {
 
@@ -109,7 +107,7 @@
 
             var valid = quack.validate(config, 'media', {
                 align: quack.OBJECT,
-                'align.vertical.y': quack.STRING,
+                'align.vertical.y': quack.NUMBER,
                 src: quack.STRING,
                 ratios: quack.ARRAY
             });
@@ -117,7 +115,21 @@
             expect(valid).toBe(true);
         });
 
-        it("should validate negative on 1 key", function () {
+        it("should validate positive on multiple keys through an object", function () {
+
+            var valid = quack.validate(config, 'media', {
+                align: {
+                    vertical: {
+                        x: quack.STRING,
+                        y: quack.NUMBER
+                    }
+                }
+            });
+
+            expect(valid).toBe(true);
+        });
+
+        it("should validate negative on at least 1 key", function () {
 
             var valid = quack.validate(config, 'media', {
                 align: quack.OBJECT,
@@ -126,6 +138,24 @@
             });
 
             expect(valid).not.toBe(true);
+        });
+
+        it("should validate positive on a map with a mixed validation structure", function () {
+
+            var valid = quack.validate(config, {
+                'media.align': {
+                    vertical: {
+                        x: quack.STRING,
+                        y: quack.NUMBER
+                    }
+                },
+                colors: {
+                    header: quack.HEX
+                },
+                'api.book.getEan': quack.FUNCTION
+            });
+
+            expect(valid).toBe(true);
         });
 
         it("should throw error exception because of unknown validation type", function () {
