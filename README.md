@@ -147,6 +147,16 @@ var hasApi = quack.hasApi(
 // true
 ```
 
+```js
+function orderableProduct(instance) {
+    return quack.hasApi(instance, ['order', 'getProductId']);
+}
+
+if (orderableProduct(something)) {
+    something.order();
+}
+```
+
 ### Get nested property
 
 * get(object, path)
