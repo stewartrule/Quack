@@ -127,7 +127,11 @@
 
 <ul>
 <li>test(object, path, regExp)</li>
-</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">match</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'resources.css.files.1'</span><span class="p">,</span> <span class="sr">/^app([a-z0-9\._\-]+)css$/</span><span class="p">);</span>
+</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">match</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span>
+    <span class="nx">config</span><span class="p">,</span>
+    <span class="s1">'resources.css.files.1'</span><span class="p">,</span>
+    <span class="sr">/^app([a-z0-9\._\-]+)css$/</span>
+<span class="p">);</span>
 <span class="c1">// true</span>
 </pre></div>
 
@@ -137,13 +141,20 @@
 <ul>
 <li>hasApi(object, path, methods)</li>
 <li>hasApi(object, methods)</li>
-</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">hasApi</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">hasApi</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'api.book'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'getCosts'</span><span class="p">,</span> <span class="s1">'getTitle'</span><span class="p">,</span> <span class="s1">'getEan'</span><span class="p">]);</span>
+</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">hasApi</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">hasApi</span><span class="p">(</span>
+    <span class="nx">config</span><span class="p">,</span>
+    <span class="s1">'api.book'</span><span class="p">,</span>
+    <span class="p">[</span><span class="s1">'getCosts'</span><span class="p">,</span> <span class="s1">'getTitle'</span><span class="p">,</span> <span class="s1">'getEan'</span><span class="p">]</span>
+<span class="p">);</span>
 <span class="c1">// true</span>
 </pre></div>
 
 <p>or</p>
 
-<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">hasApi</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">hasApi</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">book</span><span class="p">,</span> <span class="p">[</span><span class="s1">'getCosts'</span><span class="p">,</span> <span class="s1">'getTitle'</span><span class="p">,</span> <span class="s1">'getEan'</span><span class="p">]);</span>
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">hasApi</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">hasApi</span><span class="p">(</span>
+    <span class="nx">config</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">book</span><span class="p">,</span>
+    <span class="p">[</span><span class="s1">'getCosts'</span><span class="p">,</span> <span class="s1">'getTitle'</span><span class="p">,</span> <span class="s1">'getEan'</span><span class="p">]</span>
+<span class="p">);</span>
 <span class="c1">// true</span>
 </pre></div>
 
