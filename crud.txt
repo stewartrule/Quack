@@ -1,0 +1,28 @@
+/*
+console.log(_.functions(expect(1)));
+
+addExpectationResult
+toBe
+toBeCloseTo
+toBeDefined
+toBeFalsy
+toBeGreaterThan
+toBeLessThan
+toBeNaN
+toBeNull
+toBeTruthy
+toBeUndefined
+toContain
+toEqual
+toHaveBeenCalled
+toHaveBeenCalledWith
+toMatch
+toThrow
+toThrowError
+wrapCompare
+*/
+
+_.each _.functions(quack), (fn) ->
+    f = quack[fn].toString()
+    matches = f.match(/^function \(([a-zA-Z0-9,\s]+)\).*/)
+    console.log fn + "(" + (matches && matches[1]) + ')'

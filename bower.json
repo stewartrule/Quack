@@ -1,0 +1,13 @@
+{
+  "name": "quack",
+  "version": "0.0.0",
+  "dependencies": {
+    "jasmine": "~2.0.0",
+    "underscore": "~1.7.0"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ]
+}
