@@ -56,18 +56,16 @@ var hasApi = quack.hasApi(config, 'api.book', ['getCosts', 'getTitle', 'getEan']
 
 * get(parent, path)
 
+```js
+if (quack.isString(config, 'user.name')) {
+    var name = quack.get(config, 'user.name');
+}
+```
 
 ### Manipulate
 
 * set(parent, path, val)
 * clone(parent, src, dest)
-
-
-### Example
-
-
-
-
 
 
 
