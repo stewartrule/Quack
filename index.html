@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Quack by stewartrule</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Quack</h1>
+        <p>validate object paths and values</p>
+
+        <p class="view"><a href="https://github.com/stewartrule/quack">View the Project on GitHub <small>stewartrule/quack</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/stewartrule/quack/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/stewartrule/quack/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/stewartrule/quack">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h4>
+<a name="considering-this-dummy-object" class="anchor" href="#considering-this-dummy-object"><span class="octicon octicon-link"></span></a>Considering this dummy object</h4>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">media</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">align</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">vertical</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">x</span><span class="o">:</span> <span class="s1">'center'</span><span class="p">,</span>
+                <span class="nx">y</span><span class="o">:</span> <span class="s1">'top'</span>
+            <span class="p">},</span>
+            <span class="nx">horizontal</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">x</span><span class="o">:</span> <span class="s1">'center'</span><span class="p">,</span>
+                <span class="nx">y</span><span class="o">:</span> <span class="s1">'top'</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">src</span><span class="o">:</span> <span class="s1">'/base/media/image/'</span><span class="p">,</span>
+        <span class="nx">ratios</span><span class="o">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="nx">resources</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">css</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">base</span><span class="o">:</span> <span class="s1">'/static/css/'</span><span class="p">,</span>
+            <span class="nx">files</span><span class="o">:</span> <span class="p">[</span>
+                <span class="s1">'media-element.min.css'</span><span class="p">,</span>
+                <span class="s1">'app.combined.min.css'</span>
+            <span class="p">]</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="nx">api</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">book</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">getCosts</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+            <span class="nx">getTitle</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{},</span>
+            <span class="nx">getEan</span><span class="o">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">user</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">name</span><span class="o">:</span> <span class="s1">'Wallie'</span><span class="p">,</span>
+        <span class="nx">email</span><span class="o">:</span> <span class="s1">'walter@angrybytes.com'</span><span class="p">,</span>
+        <span class="nx">zipcode</span><span class="o">:</span> <span class="s1">'1211BL'</span>
+    <span class="p">},</span>
+    <span class="nx">version</span><span class="o">:</span> <span class="mf">1.2</span><span class="p">,</span>
+    <span class="nx">dev</span><span class="o">:</span> <span class="s1">'production'</span>
+<span class="p">};</span>
+</pre></div>
+
+<h3>
+<a name="type-checking" class="anchor" href="#type-checking"><span class="octicon octicon-link"></span></a>Type checking</h3>
+
+<ul>
+<li>isArray(object, path)</li>
+<li>isBoolean(object, path)</li>
+<li>isDate(object, path)</li>
+<li>isElement(object, path)</li>
+<li>isFunction(object, path)</li>
+<li>isNumber(object, path)</li>
+<li>isObject(object, path)</li>
+<li>isRegExp(object, path)</li>
+</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'resources.js.files'</span><span class="p">);</span>
+<span class="c1">// false</span>
+
+<span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'resources.js.files'</span><span class="p">);</span>
+<span class="c1">// true</span>
+</pre></div>
+
+<h3>
+<a name="pattern-checking" class="anchor" href="#pattern-checking"><span class="octicon octicon-link"></span></a>Pattern checking</h3>
+
+<ul>
+<li>isEmail(object, path)</li>
+<li>isHex(object, path)</li>
+<li>isIp(object, path)</li>
+<li>isSlug(object, path)</li>
+<li>isString(object, path)</li>
+<li>isZipcode(object, path)</li>
+</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">valid</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">isEmail</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'user.email'</span><span class="p">);</span>
+<span class="c1">// true</span>
+</pre></div>
+
+<h3>
+<a name="multiple-fields" class="anchor" href="#multiple-fields"><span class="octicon octicon-link"></span></a>Multiple fields</h3>
+
+<ul>
+<li>validate(object, path, map)</li>
+</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">valid</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">validate</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'media'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">align</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">OBJECT</span><span class="p">,</span>
+    <span class="nx">src</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">STRING</span><span class="p">,</span>
+    <span class="nx">ratios</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">ARRAY</span>
+<span class="p">});</span>
+<span class="c1">// true</span>
+</pre></div>
+
+<h3>
+<a name="custom-regexp" class="anchor" href="#custom-regexp"><span class="octicon octicon-link"></span></a>Custom regexp</h3>
+
+<ul>
+<li>test(object, path, regExp)</li>
+</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">match</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'resources.css.files.1'</span><span class="p">,</span> <span class="sr">/^app([a-z0-9\._\-]+)css$/</span><span class="p">);</span>
+<span class="c1">// true</span>
+</pre></div>
+
+<h3>
+<a name="api-check" class="anchor" href="#api-check"><span class="octicon octicon-link"></span></a>Api check</h3>
+
+<ul>
+<li>hasApi(object, path, methods)</li>
+<li>hasApi(object, methods)</li>
+</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">hasApi</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">hasApi</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'api.book'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'getCosts'</span><span class="p">,</span> <span class="s1">'getTitle'</span><span class="p">,</span> <span class="s1">'getEan'</span><span class="p">]);</span>
+<span class="c1">// true</span>
+</pre></div>
+
+<p>or</p>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">hasApi</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">hasApi</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">book</span><span class="p">,</span> <span class="p">[</span><span class="s1">'getCosts'</span><span class="p">,</span> <span class="s1">'getTitle'</span><span class="p">,</span> <span class="s1">'getEan'</span><span class="p">]);</span>
+<span class="c1">// true</span>
+</pre></div>
+
+<h3>
+<a name="get-nested-property" class="anchor" href="#get-nested-property"><span class="octicon octicon-link"></span></a>Get nested property</h3>
+
+<ul>
+<li>get(object, path)</li>
+</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="nx">quack</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'user.name'</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">name</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'user.name'</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+<h3>
+<a name="manipulate" class="anchor" href="#manipulate"><span class="octicon octicon-link"></span></a>Manipulate</h3>
+
+<ul>
+<li>set(object, path, val)</li>
+</ul><div class="highlight highlight-js"><pre><span class="nx">quack</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'x.y.z'</span><span class="p">,</span> <span class="s1">'alphabet soup'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'x.y.z'</span><span class="p">);</span>
+<span class="c1">// 'alphabet soup'</span>
+</pre></div>
+
+<ul>
+<li>clone(object, src, dest)</li>
+</ul><h3>
+<a name="validator" class="anchor" href="#validator"><span class="octicon octicon-link"></span></a>Validator</h3>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">validator</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">validator</span><span class="p">;</span>
+
+<span class="nx">validator</span><span class="p">.</span><span class="nx">isEmail</span><span class="p">(</span><span class="s1">'walter@angrybytes.com'</span><span class="p">);</span>
+<span class="nx">validator</span><span class="p">.</span><span class="nx">isHex</span><span class="p">(</span><span class="s1">'#ff6600'</span><span class="p">);</span>
+<span class="nx">validator</span><span class="p">.</span><span class="nx">isZipcode</span><span class="p">(</span><span class="s1">'1211AB'</span><span class="p">);</span>
+</pre></div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/stewartrule">stewartrule</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
