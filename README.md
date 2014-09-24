@@ -1,4 +1,6 @@
 
+![Quack](https://raw.githubusercontent.com/stewartrule/quack/master/img/quack.gif)
+
 #### Considering this dummy object
 ```js
 var config = {
