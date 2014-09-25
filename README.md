@@ -1,5 +1,11 @@
+## Quack
 
-#### Considering this dummy object
+Quack helps you to validate object structures and values.
+
+It has a dependency on [underscore.js](http://underscorejs.org/) and is still under development.
+
+
+#### Consider this dummy object
 ```js
 var config = {
     media: {
