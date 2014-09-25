@@ -202,6 +202,16 @@
     api.any = function(type) {
       return getCollectionValidator('any', type);
     };
+    api.whitelist = function(values) {
+      return api.all(function(value) {
+        return _.contains(values, value);
+      });
+    };
+    api.blacklist = function(values) {
+      return api.all(function(value) {
+        return !_.contains(values, value);
+      });
+    };
     return api;
   })();
 

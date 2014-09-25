@@ -87,18 +87,33 @@
 
         it("test every value in an array", function () {
             var valid = quack.validate(config, 'security.ip', {
-                blocked: quack.all(/^[0-9\.]+$/)
+                // blocked: quack.all(/^[0-9\.]+$/)
+                blocked: quack.all(quack.validator.regexp.Ip)
+
             });
             expect(valid).toBe(true);
         });
 
-        it("test if any value if ok", function () {
+        it("test if any value is ok", function () {
             var valid = quack.validate(config, 'security', {
                 companies: quack.any(/^Philips$/)
             });
             expect(valid).toBe(true);
         });
 
+        it("test whitelist", function () {
+            var valid = quack.validate(config, 'security', {
+                companies: quack.whitelist(['LG', 'Philips', 'Samsung'])
+            });
+            expect(valid).toBe(true);
+        });
+
+        it("test blacklist", function () {
+            var valid = quack.validate(config, 'security', {
+                companies: quack.blacklist(['xSamsung', 'xPhilips'])
+            });
+            expect(valid).toBe(true);
+        });
 
         it("test if resources.css.files only contains css filenames", function () {
             var valid = quack.validate(config, 'resources.css', {

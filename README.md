@@ -116,7 +116,7 @@ var valid = quack.validate(config, {
 ```js
 // security.ip.blocked should contain an array with only ips
 var valid = quack.validate(config, 'security.ip', {
-    blocked: quack.all(/^[0-9\.]+$/)
+    blocked: quack.all(quack.validator.regexp.Ip)
 });
 
 // companies should contain at least one entry with the string 'Philips'
@@ -132,6 +132,16 @@ var valid = quack.validate(config, 'resources.css', {
 // config.coordinates should only contains numbers
 var valid = quack.validate(config, {
     coordinates: quack.all(_.isNumber)
+});
+
+// company only valid if it's present in the whitelist
+var valid = quack.validate(config, 'security', {
+    companies: quack.whitelist(['LG', 'Philips', 'Samsung'])
+});
+
+// company only valid if it's not in the blacklist
+var valid = quack.validate(config, 'security', {
+    companies: quack.blacklist(['xSamsung', 'xPhilips'])
 });
 ```
 
@@ -238,10 +248,7 @@ if (orderableProduct(something)) {
 * get(object, path)
 
 ```js
-var name = '';
-if (quack.isString(config, 'user.name')) {
-    name = quack.get(config, 'user.name');
-}
+var name = quack.get(config, 'user.name');
 ```
 
 * clone(object, path)
@@ -260,8 +267,6 @@ quack.set(config, 'x.y.z', 'alphabet soup');
 var res = quack.get(config, 'x.y.z');
 // 'alphabet soup'
 ```
-
-
 
 
 ### Validator

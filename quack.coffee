@@ -163,5 +163,13 @@ window.quack = do ->
     api.any = (type) ->
         getCollectionValidator('any', type)
 
+    api.whitelist = (values) ->
+        api.all (value) ->
+            _.contains(values, value)
+
+    api.blacklist = (values) ->
+        api.all (value) ->
+            not _.contains(values, value)
+
     api
 
