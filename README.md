@@ -48,6 +48,24 @@ var config = {
         email: 'foobar@baz.com',
         zipcode: '1211BL'
     },
+    security: {
+        ip: {
+            blocked: [
+                '127.0.0.1',
+                '192.0.2.197'
+            ]
+        },
+        companies: [
+            'Samsung',
+            'Philips',
+            'LG'
+        ]
+    },
+    coordinates: {
+        x: 10,
+        y: 30,
+        z: 90
+    },
     version: 1.2,
     environment: 'production',
     debug: false,
@@ -92,7 +110,28 @@ var valid = quack.validate(config, {
     'media.src': /^[a-z\/]+$/
 });
 // true
+
+var valid = quack.validate(config, 'security.ip', {
+    blocked: quack.all(/^[0-9\.]+$/)
+});
+// true
+
+var valid = quack.validate(config, 'security', {
+    companies: quack.any(/^Philips$/)
+});
+// true
+
+var valid = quack.validate(config, 'resources.css', {
+    files: quack.all(/^[a-z0-9\-\_\.\/]+.css$/)
+});
+// true
+
+var valid = quack.validate(config, {
+    coordinates: quack.any(_.isNumber)
+});
+// true
 ```
+
 
 #### Available constants
 * FUNCTION

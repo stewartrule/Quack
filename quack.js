@@ -2,7 +2,7 @@
 (function() {
 
   window.quack = (function() {
-    var api, clone, dot, get, has, hasApi, hasDot, hasObject, set, test, types, validate, validator;
+    var api, clone, dot, get, getCollectionValidator, has, hasApi, hasDot, hasObject, set, test, types, validate, validator;
     validator = (function() {
       var api, delegate, regexp;
       api = {};
@@ -150,7 +150,13 @@
               return test(obj, key, type);
             }
             nested = get(obj, key);
-            return (nested != null) && validate(nested, type);
+            if (nested != null) {
+              if (_.isFunction(type)) {
+                return type(nested);
+              }
+              return validate(nested, type);
+            }
+            return false;
           }
           if (!_.contains(types, type)) {
             throw new Error('Unknown validation type');
@@ -168,6 +174,33 @@
       }
       nested = get(parent, path);
       return nested && validate(nested, map);
+    };
+    getCollectionValidator = function(method, type) {
+      return function(value) {
+        if (_.isArray(value) || _.isObject(value)) {
+          return _[method](value, function(item) {
+            var fn;
+            if (_.isRegExp(type)) {
+              return type.test(item);
+            }
+            if (_.contains(types, type)) {
+              fn = 'is' + type;
+              return validator[fn](item);
+            }
+            if (_.isFunction(type)) {
+              return type(item);
+            }
+            throw new Error('Unknown validation type to validate collections');
+          });
+        }
+        return false;
+      };
+    };
+    api.all = function(type) {
+      return getCollectionValidator('all', type);
+    };
+    api.any = function(type) {
+      return getCollectionValidator('any', type);
     };
     return api;
   })();

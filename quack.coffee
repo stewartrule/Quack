@@ -122,7 +122,11 @@ window.quack = do ->
                     if _.isRegExp(type)
                         return test(obj, key, type)
                     nested = get(obj, key)
-                    return nested? && validate(nested, type)
+                    if nested?
+                        if _.isFunction(type)
+                            return type(nested)
+                        return validate(nested, type)
+                    return false
                 unless _.contains(types, type)
                     throw new Error('Unknown validation type')
                 fn = 'is' + type
@@ -134,6 +138,30 @@ window.quack = do ->
             return validate(parent, path)
         nested = get(parent, path)
         nested && validate(nested, map)
+
+    getCollectionValidator = (method, type) ->
+        (value) ->
+            if _.isArray(value) or _.isObject(value)
+                return _[method] value, (item) ->
+                    if _.isRegExp(type)
+                        return type.test(item)
+
+                    if _.contains(types, type)
+                        fn = 'is' + type
+                        return validator[fn](item)
+
+                    if _.isFunction(type)
+                        return type(item)
+
+                    throw new Error('Unknown validation type to validate collections')
+
+            return false
+
+    api.all = (type) ->
+        getCollectionValidator('all', type)
+
+    api.any = (type) ->
+        getCollectionValidator('any', type)
 
     api
 

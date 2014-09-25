@@ -50,6 +50,24 @@
             email: 'foobar@baz.com',
             zipcode: '1211BL'
         },
+        security: {
+            ip: {
+                blocked: [
+                    '127.0.0.1',
+                    '192.0.2.197'
+                ]
+            },
+            companies: [
+                'Samsung',
+                'Philips',
+                'LG'
+            ]
+        },
+        coordinates: {
+            x: 10,
+            y: 30,
+            z: 90
+        },
         version: 1.2,
         environment: 'production',
         debug: false,
@@ -63,6 +81,38 @@
             expect(res).toBe(true);
         });
 
+    });
+
+    describe('collection test', function () {
+
+        it("test every value in an array", function () {
+            var valid = quack.validate(config, 'security.ip', {
+                blocked: quack.all(/^[0-9\.]+$/)
+            });
+            expect(valid).toBe(true);
+        });
+
+        it("test if any value if ok", function () {
+            var valid = quack.validate(config, 'security', {
+                companies: quack.any(/^Philips$/)
+            });
+            expect(valid).toBe(true);
+        });
+
+
+        it("test if resources.css.files only contains css filenames", function () {
+            var valid = quack.validate(config, 'resources.css', {
+                files: quack.all(/^[a-z0-9\-\_\.\/]+.css$/)
+            });
+            expect(valid).toBe(true);
+        });
+
+        it("test every value in an object'", function () {
+            var valid = quack.validate(config, {
+                coordinates: quack.any(_.isNumber)
+            });
+            expect(valid).toBe(true);
+        });
     });
 
     describe('boolean test', function () {
