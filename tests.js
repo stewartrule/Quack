@@ -51,7 +51,9 @@
             zipcode: '1211BL'
         },
         version: 1.2,
-        dev: 'production'
+        environment: 'production',
+        debug: false,
+        displayErrors: true
     };
 
     describe('regex test', function () {
@@ -59,6 +61,28 @@
         it("the second css file path ('resources.css.files.1') should start with 'app' and end with '.css'", function () {
             var res = quack.test(config, 'resources.css.files.1', /^app([a-z0-9\._\-]+)css$/);
             expect(res).toBe(true);
+        });
+
+    });
+
+    describe('boolean test', function () {
+
+        it("make distinctions between null and false", function () {
+            var res = quack.get(config, 'debug');
+            expect(res).toBe(false);
+        });
+
+        it("true to be a boolean", function () {
+            var res = quack.get(config, 'displayErrors');
+            expect(res).toBe(true);
+        });
+
+        it("Validate correctly on boolean constants", function () {
+            var valid = quack.validate(config, {
+                debug: quack.BOOLEAN,
+                displayErrors: quack.BOOLEAN
+            });
+            expect(valid).toBe(true);
         });
 
     });
@@ -229,26 +253,5 @@
 
     });
 
-    describe('clone book api to new video api', function () {
-
-        quack.clone(config, 'api.book', 'api.video');
-
-        it('should have the methods getCosts, getTitle and getEan', function () {
-            var res = quack.hasApi(config, 'api.video', ['getCosts', 'getTitle', 'getEan']);
-            expect(res).toBe(true);
-        });
-
-        it('should have added a new method getDuration to api.video', function () {
-            quack.set(config, 'api.video.getDuration', function () {});
-            var res = quack.hasApi(config, 'api.video', ['getCosts', 'getTitle', 'getEan', 'getDuration']);
-            expect(res).toBe(true);
-        });
-
-        it('book api should not have the new getDuration method', function () {
-            var res = quack.hasApi(config, 'api.book', ['getCosts', 'getTitle', 'getEan', 'getDuration']);
-            expect(res).not.toBe(true);
-        });
-
-    });
 
 }());

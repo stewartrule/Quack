@@ -150,7 +150,7 @@
               return test(obj, key, type);
             }
             nested = get(obj, key);
-            return nested && validate(nested, type);
+            return (nested != null) && validate(nested, type);
           }
           if (!_.contains(types, type)) {
             throw new Error('Unknown validation type');
