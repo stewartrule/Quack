@@ -52,40 +52,9 @@ var config = {
     dev: 'production'
 };
 ```
-### Type checking
 
-* isArray(object, path)
-* isBoolean(object, path)
-* isDate(object, path)
-* isElement(object, path)
-* isFunction(object, path)
-* isNumber(object, path)
-* isObject(object, path)
-* isRegExp(object, path)
 
-```js
-var res = quack.isNumber(config, 'resources.js.files');
-// false
-
-var res = quack.isArray(config, 'resources.js.files');
-// true
-```
-
-### Pattern checking
-
-* isEmail(object, path)
-* isHex(object, path)
-* isIp(object, path)
-* isSlug(object, path)
-* isString(object, path)
-* isZipcode(object, path)
-
-```js
-var valid = quack.isEmail(config, 'user.email');
-// true
-```
-
-### Multiple fields
+### Checking multiple paths
 * validate(object, path, map)
 
 ```js
@@ -139,6 +108,40 @@ var valid = quack.validate(config, {
 * IP
 * SLUG
 
+
+### Checking a single path
+
+* isArray(object, path)
+* isBoolean(object, path)
+* isDate(object, path)
+* isElement(object, path)
+* isFunction(object, path)
+* isNumber(object, path)
+* isObject(object, path)
+* isRegExp(object, path)
+
+```js
+var res = quack.isNumber(config, 'resources.js.files');
+// false
+
+var res = quack.isArray(config, 'resources.js.files');
+// true
+```
+
+### Pattern checking
+
+* isEmail(object, path)
+* isHex(object, path)
+* isIp(object, path)
+* isSlug(object, path)
+* isString(object, path)
+* isZipcode(object, path)
+
+```js
+var valid = quack.isEmail(config, 'user.email');
+// true
+```
+
 ### Custom regexp
 
 * test(object, path, regExp)
@@ -152,7 +155,7 @@ var match = quack.test(
 // true
 ```
 
-### Api check
+### Check for an interface or API
 
 * hasApi(object, path, methods)
 * hasApi(object, methods)
@@ -202,6 +205,7 @@ if (quack.isString(config, 'user.name')) {
 * set(object, path, val)
 ```js
 quack.set(config, 'x.y.z', 'alphabet soup');
+
 var res = quack.get(config, 'x.y.z');
 // 'alphabet soup'
 ```
@@ -210,6 +214,8 @@ var res = quack.get(config, 'x.y.z');
 
 
 ### Validator
+
+for quick value checks you can also use the validator that quack uses internally
 
 ```js
 var validator = quack.validator;
