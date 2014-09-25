@@ -244,6 +244,13 @@ if (quack.isString(config, 'user.name')) {
 }
 ```
 
+* clone(object, path)
+
+```js
+// same as get but creates a shallow clone of objects
+var book = quack.clone(config, 'api.book');
+```
+
 ### Manipulate
 
 * set(object, path, val)
@@ -254,7 +261,7 @@ var res = quack.get(config, 'x.y.z');
 // 'alphabet soup'
 ```
 
-* clone(object, path)
+
 
 
 ### Validator
