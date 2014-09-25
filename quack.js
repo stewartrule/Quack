@@ -102,17 +102,16 @@
       str = get(parent, path);
       return regExp.test(str);
     };
-    clone = function(parent, src, dest) {
+    clone = function(parent, src) {
       var nested;
       nested = get(parent, src);
       if (nested == null) {
-        return false;
+        return null;
       }
       if (_.isObject(nested)) {
-        nested = _.clone(nested);
+        return _.clone(nested);
       }
-      set(parent, dest, nested);
-      return get(parent, dest);
+      return nested;
     };
     api = {
       get: get,

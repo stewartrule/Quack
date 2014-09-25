@@ -87,14 +87,13 @@ window.quack = do ->
         str = get(parent, path)
         regExp.test(str)
 
-    clone = (parent, src, dest) ->
+    clone = (parent, src) ->
         nested = get(parent, src)
         unless nested?
-            return false
+            return null
         if _.isObject(nested)
-            nested = _.clone(nested)
-        set(parent, dest, nested)
-        get(parent, dest)
+            return _.clone(nested)
+        nested
 
     api = { get, set, test, clone }
 
