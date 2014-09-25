@@ -109,6 +109,13 @@ var valid = quack.validate(config, {
 // true
 ```
 
+```js
+var valid = quack.validate(config, {
+    'user.name': /^[a-zA-Z]+$/,
+    'media.src': /^[a-z\/]+$/
+});
+// true
+```
 
 ### Custom regexp
 

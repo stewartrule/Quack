@@ -117,14 +117,18 @@ window.quack = do ->
         api[type.toUpperCase()] = type
 
     validate = (obj, map) ->
-        _.all map, (type, key) ->
-            if _.isObject(type)
-                nested = get(obj, key)
-                return nested && validate(nested, type)
-            unless _.contains(types, type)
-                throw new Error('Unknown validation type')
-            fn = 'is' + type
-            has(obj, key, fn)
+        if _.isObject(map) && not _.isRegExp(map)
+            return _.all map, (type, key) ->
+                if _.isObject(type)
+                    if _.isRegExp(type)
+                        return test(obj, key, type)
+                    nested = get(obj, key)
+                    return nested && validate(nested, type)
+                unless _.contains(types, type)
+                    throw new Error('Unknown validation type')
+                fn = 'is' + type
+                return has(obj, key, fn)
+        return false
 
     api.validate = (parent, path, map) ->
         if _.isObject(path)

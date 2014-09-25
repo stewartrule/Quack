@@ -140,6 +140,16 @@
             expect(valid).not.toBe(true);
         });
 
+        it("should validate regex literals", function () {
+
+            var valid = quack.validate(config, {
+                'user.name': /^[a-zA-Z]+$/,
+                'media.src': /^[a-z\/]+$/
+            });
+
+            expect(valid).toBe(true);
+        });
+
         it("should validate positive on a map with a mixed validation structure", function () {
 
             var valid = quack.validate(config, {
@@ -152,7 +162,8 @@
                 colors: {
                     header: quack.HEX
                 },
-                'api.book.getEan': quack.FUNCTION
+                'api.book.getEan': quack.FUNCTION,
+                'user.name':  /^[a-zA-Z]+$/
             });
 
             expect(valid).toBe(true);
@@ -161,17 +172,14 @@
         it("should throw error exception because of unknown validation type", function () {
 
             expect(function () {
-
                 quack.validate(config, 'media', {
                     align: 'foo',
                     src: quack.STRING,
                     ratios: quack.REGEXP
                 });
-
             }).toThrowError('Unknown validation type');
 
         });
-
     });
 
     describe('resources.js.files', function () {

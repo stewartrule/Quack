@@ -143,18 +143,24 @@
       return api[type.toUpperCase()] = type;
     });
     validate = function(obj, map) {
-      return _.all(map, function(type, key) {
-        var fn, nested;
-        if (_.isObject(type)) {
-          nested = get(obj, key);
-          return nested && validate(nested, type);
-        }
-        if (!_.contains(types, type)) {
-          throw new Error('Unknown validation type');
-        }
-        fn = 'is' + type;
-        return has(obj, key, fn);
-      });
+      if (_.isObject(map) && !_.isRegExp(map)) {
+        return _.all(map, function(type, key) {
+          var fn, nested;
+          if (_.isObject(type)) {
+            if (_.isRegExp(type)) {
+              return test(obj, key, type);
+            }
+            nested = get(obj, key);
+            return nested && validate(nested, type);
+          }
+          if (!_.contains(types, type)) {
+            throw new Error('Unknown validation type');
+          }
+          fn = 'is' + type;
+          return has(obj, key, fn);
+        });
+      }
+      return false;
     };
     api.validate = function(parent, path, map) {
       var nested;
