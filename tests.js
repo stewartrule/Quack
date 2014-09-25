@@ -85,37 +85,42 @@
 
     describe('collection test', function () {
 
-        it("test every value in an array", function () {
+        it("should match every value as an ip-address", function () {
             var valid = quack.validate(config, 'security.ip', {
-                // blocked: quack.all(/^[0-9\.]+$/)
                 blocked: quack.all(quack.validator.regexp.Ip)
-
             });
             expect(valid).toBe(true);
         });
 
-        it("test if any value is ok", function () {
+        it("should match any of the values to 'Philips'", function () {
             var valid = quack.validate(config, 'security', {
                 companies: quack.any(/^Philips$/)
             });
             expect(valid).toBe(true);
         });
 
-        it("test whitelist", function () {
+        it("should validate whitelist", function () {
             var valid = quack.validate(config, 'security', {
                 companies: quack.whitelist(['LG', 'Philips', 'Samsung'])
             });
             expect(valid).toBe(true);
         });
 
-        it("test blacklist", function () {
+        it("should validate blacklist", function () {
             var valid = quack.validate(config, 'security', {
                 companies: quack.blacklist(['xSamsung', 'xPhilips'])
             });
             expect(valid).toBe(true);
         });
 
-        it("test if resources.css.files only contains css filenames", function () {
+        it("should validate range", function () {
+            var valid = quack.validate(config, {
+                coordinates: quack.range(10, 90)
+            });
+            expect(valid).toBe(true);
+        });
+
+        it("should test if resources.css.files only contains css filenames", function () {
             var valid = quack.validate(config, 'resources.css', {
                 files: quack.all(/^[a-z0-9\-\_\.\/]+.css$/)
             });

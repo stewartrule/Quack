@@ -212,6 +212,11 @@
         return !_.contains(values, value);
       });
     };
+    api.range = function(min, max) {
+      return api.all(function(value) {
+        return value >= min && value <= max;
+      });
+    };
     return api;
   })();
 

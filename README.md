@@ -143,6 +143,11 @@ var valid = quack.validate(config, 'security', {
 var valid = quack.validate(config, 'security', {
     companies: quack.blacklist(['xSamsung', 'xPhilips'])
 });
+
+// coordinates are only valid between 10 and 90 (inclusive)
+var valid = quack.validate(config, {
+    coordinates: quack.range(10, 90)
+});
 ```
 
 

@@ -171,5 +171,9 @@ window.quack = do ->
         api.all (value) ->
             not _.contains(values, value)
 
+    api.range = (min, max) ->
+        api.all (value) ->
+            value >= min && value <= max
+
     api
 
