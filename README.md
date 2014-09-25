@@ -117,6 +117,22 @@ var valid = quack.validate(config, {
 // true
 ```
 
+#### Available constants
+* FUNCTION
+* OBJECT
+* ARRAY
+* NUMBER
+* STRING
+* BOOLEAN
+* DATE
+* REGEXP
+* ELEMENT
+* EMAIL
+* ZIPCODE
+* HEX
+* IP
+* SLUG
+
 ### Custom regexp
 
 * test(object, path, regExp)
