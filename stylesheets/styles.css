@@ -1,11 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Lato:300italic,700italic,300,700);
 
-html {
-  background: url(http://defaultcache.yspimages.net/galleryimage/e0/e069d3c85ff58b8db1fba0a10a062367.jpg) bottom left no-repeat;
-  background-attachment: fixed;
-  height: 100%;
-}
-
 body {
   padding:50px;
   font:14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
