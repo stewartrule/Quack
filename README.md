@@ -110,26 +110,29 @@ var valid = quack.validate(config, {
     'media.src': /^[a-z\/]+$/
 });
 // true
+```
 
+#### Test array and object values
+```js
+// security.ip.blocked should contain an array with only ips
 var valid = quack.validate(config, 'security.ip', {
     blocked: quack.all(/^[0-9\.]+$/)
 });
-// true
 
+// companies should contain at least one entry with the string 'Philips'
 var valid = quack.validate(config, 'security', {
     companies: quack.any(/^Philips$/)
 });
-// true
 
+// resources.css.files should contain only css filenames
 var valid = quack.validate(config, 'resources.css', {
     files: quack.all(/^[a-z0-9\-\_\.\/]+.css$/)
 });
-// true
 
+// config.coordinates should only contains numbers
 var valid = quack.validate(config, {
-    coordinates: quack.any(_.isNumber)
+    coordinates: quack.all(_.isNumber)
 });
-// true
 ```
 
 
