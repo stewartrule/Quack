@@ -147,7 +147,7 @@
 
 <div class="highlight highlight-js"><pre><span class="c1">// security.ip.blocked should contain an array with only ips</span>
 <span class="kd">var</span> <span class="nx">valid</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">validate</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'security.ip'</span><span class="p">,</span> <span class="p">{</span>
-    <span class="nx">blocked</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="sr">/^[0-9\.]+$/</span><span class="p">)</span>
+    <span class="nx">blocked</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">quack</span><span class="p">.</span><span class="nx">validator</span><span class="p">.</span><span class="nx">regexp</span><span class="p">.</span><span class="nx">Ip</span><span class="p">)</span>
 <span class="p">});</span>
 
 <span class="c1">// companies should contain at least one entry with the string 'Philips'</span>
@@ -163,6 +163,21 @@
 <span class="c1">// config.coordinates should only contains numbers</span>
 <span class="kd">var</span> <span class="nx">valid</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">validate</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="p">{</span>
     <span class="nx">coordinates</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isNumber</span><span class="p">)</span>
+<span class="p">});</span>
+
+<span class="c1">// company only valid if it's present in the whitelist</span>
+<span class="kd">var</span> <span class="nx">valid</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">validate</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'security'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">companies</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">whitelist</span><span class="p">([</span><span class="s1">'LG'</span><span class="p">,</span> <span class="s1">'Philips'</span><span class="p">,</span> <span class="s1">'Samsung'</span><span class="p">])</span>
+<span class="p">});</span>
+
+<span class="c1">// company only valid if it's not in the blacklist</span>
+<span class="kd">var</span> <span class="nx">valid</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">validate</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'security'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">companies</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">blacklist</span><span class="p">([</span><span class="s1">'xSamsung'</span><span class="p">,</span> <span class="s1">'xPhilips'</span><span class="p">])</span>
+<span class="p">});</span>
+
+<span class="c1">// coordinates are only valid between 10 and 90 (inclusive)</span>
+<span class="kd">var</span> <span class="nx">valid</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">validate</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">coordinates</span><span class="o">:</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">90</span><span class="p">)</span>
 <span class="p">});</span>
 </pre></div>
 
@@ -267,10 +282,7 @@
 
 <ul>
 <li>get(object, path)</li>
-</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
-<span class="k">if</span> <span class="p">(</span><span class="nx">quack</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'user.name'</span><span class="p">))</span> <span class="p">{</span>
-    <span class="nx">name</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'user.name'</span><span class="p">);</span>
-<span class="p">}</span>
+</ul><div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="nx">quack</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">config</span><span class="p">,</span> <span class="s1">'user.name'</span><span class="p">);</span>
 </pre></div>
 
 <ul>
