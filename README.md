@@ -12,11 +12,11 @@ var config = {
         align: {
             vertical: {
                 x: 'center',
-                y: 'top'
+                y: 50
             },
             horizontal: {
                 x: 'center',
-                y: 'top'
+                y: 100
             }
         },
         src: '/base/media/image/',
@@ -60,7 +60,7 @@ var config = {
 ```js
 var valid = quack.validate(config, 'media', {
     align: quack.OBJECT,
-    'align.vertical.y': quack.STRING,
+    'align.vertical.y': quack.NUMBER,
     src: quack.STRING,
     ratios: quack.ARRAY
 });
