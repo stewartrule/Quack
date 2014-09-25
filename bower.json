@@ -1,9 +1,12 @@
 {
   "name": "quack",
   "version": "0.0.0",
+  "main": "quack.js",
   "dependencies": {
-    "jasmine": "~2.0.0",
     "underscore": "~1.7.0"
+  },
+  "devDependencies": {
+    "jasmine": "~2.0.0"
   },
   "ignore": [
     "**/.*",
