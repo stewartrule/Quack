@@ -49,7 +49,9 @@ var config = {
         zipcode: '1211BL'
     },
     version: 1.2,
-    dev: 'production'
+    environment: 'production',
+    debug: false,
+    displayErrors: true
 };
 ```
 
