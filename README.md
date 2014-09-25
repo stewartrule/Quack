@@ -254,7 +254,7 @@ var res = quack.get(config, 'x.y.z');
 // 'alphabet soup'
 ```
 
-* clone(object, src, dest)
+* clone(object, path)
 
 
 ### Validator
