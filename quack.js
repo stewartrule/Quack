@@ -7,7 +7,7 @@
     validator = (function() {
       var api, delegate, regexp;
       api = {};
-      delegate = ['Function', 'Object', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN'];
+      delegate = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object'];
       _.each(delegate, function(type) {
         var fn;
         fn = 'is' + type;
@@ -195,6 +195,7 @@
       return _.find(types, function(type) {
         var fn;
         fn = 'is' + type;
+        console.log(fn);
         return validator[fn](val);
       });
     };
@@ -213,9 +214,9 @@
               valid = test(obj, key, type);
               if (!valid) {
                 if (!api.isString(obj, key)) {
-                  doesNotMatch.push('String');
+                  doesNotMatch.push(api.STRING);
                 }
-                doesNotMatch.push('RegExp');
+                doesNotMatch.push(api.REGEXP);
                 errors[key] = {
                   detected: detected,
                   doesNotMatch: doesNotMatch,
@@ -277,6 +278,9 @@
       if (_.isObject(path)) {
         return getErrors(parent, path);
       }
+      if (!_.isString(path)) {
+        throw new Error('path/key should be a string');
+      }
       pathExists = hasPath(parent, path);
       nested = get(parent, path);
       if (nested) {
@@ -286,7 +290,7 @@
       errors = {};
       errors[path] = {
         detected: detected,
-        doesNotMatch: ['Object'],
+        doesNotMatch: [api.OBJECT],
         pathExists: pathExists
       };
       return {

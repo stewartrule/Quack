@@ -9,7 +9,7 @@ Lib = do ->
         api = {}
 
         # List of types we can delegate to underscore.js
-        delegate = ['Function', 'Object', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN']
+        delegate = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object']
 
         # Delegate to underscore.js
         _.each delegate, (type) ->
@@ -179,6 +179,7 @@ Lib = do ->
     detectType = (val) ->
         _.find types, (type) ->
             fn = 'is' + type
+            console.log(fn)
             validator[fn](val)
 
     getErrors = (obj, map) ->
