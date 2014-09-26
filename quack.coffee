@@ -1,6 +1,6 @@
 
 # Quack
-quack = do ->
+Lib = do ->
 
     # Validator
     validator = do ->
@@ -136,7 +136,7 @@ quack = do ->
     # Make the validator publicly available for simple checks
     api.validator = validator
 
-    # Define constants
+    # Define constants which are used to check against within validate
     _.each types, (type) ->
         api[type.toUpperCase()] = type
 
@@ -173,16 +173,12 @@ quack = do ->
                 return _[method] value, (item) ->
                     if _.isRegExp(type)
                         return type.test(item)
-
                     if _.contains(types, type)
                         fn = 'is' + type
                         return validator[fn](item)
-
                     if _.isFunction(type)
                         return type(item)
-
                     throw new Error('Unknown validation type to validate collections')
-
             return false
 
     # Checks if all of the values in the list pass the predicate truth test
@@ -215,12 +211,12 @@ quack = do ->
 # Export quack
 if typeof define is 'function' and define.amd
     # AMD
-    define -> quack
+    define -> Lib
 else if typeof exports is 'object'
     # CommonJS
-    module.exports = quack
+    module.exports = Lib
 else
     # Global
-    window.quack = quack
+    window.quack = Lib
 
 
