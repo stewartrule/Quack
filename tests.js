@@ -71,13 +71,107 @@
         version: 1.2,
         environment: 'production',
         debug: false,
-        displayErrors: true
+        displayErrors: true,
+
+        what: {
+            nope: undefined,
+            noWay: null
+        }
     };
 
-    describe('regex test', function () {
 
+    var errors = quack.getErrors(config, 'what', {
+        nope: quack.NUMBER,
+        noWay: quack.NULL
+    });
+
+    console.log('what', errors);
+
+    var errors = quack.getErrors(config, 'media', {
+        'align.vertical.y': _.isNumber
+    });
+
+    console.log(errors);
+
+    var errors = quack.getErrors(config, 'media', {
+        align: quack.OBJECT,
+        'Xalign.vertical.y': quack.NUMBER,
+        src: quack.ZIPCODE,
+        ratios: quack.ARRAY
+    });
+
+    console.log(errors);
+
+    var errors = quack.getErrors(config, 'media', {
+        align: quack.NUMBER,
+        'align.vertical.y': quack.STRING,
+        src: quack.ARRAY,
+        ratios: /^foo$/
+    });
+
+    console.log(errors);
+
+    var errors = quack.getErrors(config, 'resources.css', {
+        files: quack.all(/^[0-9\-\_\.\/]+.css$/)
+    });
+
+    console.log(errors);
+
+    var errors = quack.getErrors(config, 'media', {
+        align: {
+            vertical: {
+                x: quack.ARRAY,
+                y: quack.NUMBER
+            }
+        }
+    });
+
+    console.log(errors);
+
+    var errors = quack.getErrors(config, 'foobar', {
+        'align.vertical.y': quack.STRING
+    });
+
+    console.log(errors);
+
+    var errors = quack.getErrors(config, {
+        'align.vertical.y': quack.STRING
+    });
+
+    console.log(errors);
+
+
+    describe('regex test', function () {
         it("the second css file path ('resources.css.files.1') should start with 'app' and end with '.css'", function () {
             var res = quack.test(config, 'resources.css.files.1', /^app([a-z0-9\._\-]+)css$/);
+            expect(res).toBe(true);
+        });
+    });
+
+    describe('expecting', function () {
+
+        it("unexisting path to not be a boolean", function () {
+            var res = quack.isBoolean(config, 'foo.bar');
+            expect(res).toBe(false);
+        });
+
+        it("unexisting path to return false and not null", function () {
+            var res = quack.isNull(config, 'foo.bar');
+            expect(res).toBe(false);
+        });
+
+        it("unexisting path to return false and not undefined", function () {
+            var res = quack.isUndefined(config, 'foo.bar');
+            expect(res).toBe(false);
+        });
+
+        it("undefined to be undefined", function () {
+            var res = quack.isUndefined(config, 'what.nope');
+            expect(res).toBe(true);
+        });
+
+        it("null to be null", function () {
+            var res = quack.isNull(config, 'what.noWay');
             expect(res).toBe(true);
         });
 
@@ -187,9 +281,7 @@
         });
 
         it("should recognize invalid hex value", function () {
-
             var valid = quack.isHex(config, 'colors.footer');
-
             expect(valid).not.toBe(true);
         });
 

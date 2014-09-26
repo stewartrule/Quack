@@ -1,5 +1,5 @@
 
-# Quack
+# Kwek kwek!
 Lib = do ->
 
     # Validator
@@ -9,7 +9,7 @@ Lib = do ->
         api = {}
 
         # List of types we can delegate to underscore.js
-        delegate = ['Function', 'Object', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element']
+        delegate = ['Function', 'Object', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN']
 
         # Delegate to underscore.js
         _.each delegate, (type) ->
@@ -62,21 +62,36 @@ Lib = do ->
     # Get value at a given path
     get = (parent, path) ->
         unless path
-            return null
+            return undefined
         if hasDot(path)
             path = path.split(dot)
             initial = _.initial(path)
             last = _.last(path)
             for key in initial
                 unless hasObject(parent, key)
-                    return null
+                    return undefined
                 parent = parent[key]
             if _.has(parent, last)
                 return parent[last]
-            return null
+            return undefined
         if _.has(parent, path)
             return parent[path]
-        null
+        undefined
+
+    # Check if all of the keys are in order
+    hasPath = (parent, path) ->
+        unless path
+            return false
+        if hasDot(path)
+            path = path.split(dot)
+            initial = _.initial(path)
+            last = _.last(path)
+            for key in initial
+                unless hasObject(parent, key)
+                    return false
+                parent = parent[key]
+            return _.has(parent, last)
+        return _.has(parent, path)
 
     # Set value at a given path
     set = (parent, path, val) ->
@@ -96,8 +111,10 @@ Lib = do ->
 
     # Check if object has a value at a given path that passes the given truth test
     has = (parent, path, fn) ->
+        unless hasPath(parent, path)
+            return false
         nested = get(parent, path)
-        nested? && validator[fn](nested)
+        validator[fn](nested)
 
     # Check if object has a value at a given path that matches the given regex
     test = (parent, path, regExp) ->
@@ -158,6 +175,75 @@ Lib = do ->
                 fn = 'is' + type
                 return has(obj, key, fn)
         return false
+
+    detectType = (val) ->
+        _.find types, (type) ->
+            fn = 'is' + type
+            validator[fn](val)
+
+    getErrors = (obj, map) ->
+        errors = {}
+        if _.isObject(map) && not _.isRegExp(map)
+            _.each map, (type, key) ->
+
+                pathExists = hasPath(obj, key)
+                nested = get(obj, key)
+                detected = detectType(nested)
+
+                doesNotMatch = []
+
+                if _.isObject(type)
+
+                    # Validate by regex
+                    if _.isRegExp(type)
+                        valid = test(obj, key, type)
+                        unless valid
+                            unless api.isString(obj, key)
+                                doesNotMatch.push('String')
+                            doesNotMatch.push('RegExp')
+                            errors[key] = { detected, doesNotMatch, pathExists }
+                        return
+
+                    # Validate by nested map
+                    if nested?
+                        if _.isFunction(type)
+                            valid = type(nested)
+                            doesNotMatch.push('callback')
+                            unless valid
+                                errors[key] = { detected, doesNotMatch, pathExists }
+                            return
+
+                        subErrors = getErrors(nested, type)
+                        unless subErrors.valid
+                            _.each subErrors.errors, (err, k) ->
+                                errors[key + '.' + k] = err
+                        return
+
+                    errors[key] = { detected, doesNotMatch, pathExists }
+
+                unless _.contains(types, type)
+                    throw new Error('Unknown validation type')
+
+                # Validate by constant
+                fn = 'is' + type
+                valid = has(obj, key, fn)
+                unless valid
+                    errors[key] = { detected, doesNotMatch: [type], pathExists }
+
+        numErrors = _.keys(errors).length
+        { valid: numErrors is 0, errors: errors, numErrors: numErrors }
+
+    api.getErrors = (parent, path, map) ->
+        if _.isObject(path)
+            return getErrors(parent, path)
+        pathExists = hasPath(parent, path)
+        nested = get(parent, path)
+        if nested
+            return getErrors(nested, map)
+        detected = detectType(nested)
+        errors = {}
+        errors[path] = { detected, doesNotMatch: ['Object'], pathExists }
+        { valid: false, errors: errors, numErrors: 1 }
 
     # Validate object or a deeper object inside the object
     api.validate = (parent, path, map) ->

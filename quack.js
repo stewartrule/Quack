@@ -3,11 +3,11 @@
   var Lib;
 
   Lib = (function() {
-    var api, clone, dot, get, getCollectionValidator, has, hasApi, hasDot, hasObject, set, test, types, validate, validator;
+    var api, clone, detectType, dot, get, getCollectionValidator, getErrors, has, hasApi, hasDot, hasObject, hasPath, set, test, types, validate, validator;
     validator = (function() {
       var api, delegate, regexp;
       api = {};
-      delegate = ['Function', 'Object', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element'];
+      delegate = ['Function', 'Object', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN'];
       _.each(delegate, function(type) {
         var fn;
         fn = 'is' + type;
@@ -47,7 +47,7 @@
     get = function(parent, path) {
       var initial, key, last, _i, _len;
       if (!path) {
-        return null;
+        return void 0;
       }
       if (hasDot(path)) {
         path = path.split(dot);
@@ -56,19 +56,39 @@
         for (_i = 0, _len = initial.length; _i < _len; _i++) {
           key = initial[_i];
           if (!hasObject(parent, key)) {
-            return null;
+            return void 0;
           }
           parent = parent[key];
         }
         if (_.has(parent, last)) {
           return parent[last];
         }
-        return null;
+        return void 0;
       }
       if (_.has(parent, path)) {
         return parent[path];
       }
-      return null;
+      return void 0;
+    };
+    hasPath = function(parent, path) {
+      var initial, key, last, _i, _len;
+      if (!path) {
+        return false;
+      }
+      if (hasDot(path)) {
+        path = path.split(dot);
+        initial = _.initial(path);
+        last = _.last(path);
+        for (_i = 0, _len = initial.length; _i < _len; _i++) {
+          key = initial[_i];
+          if (!hasObject(parent, key)) {
+            return false;
+          }
+          parent = parent[key];
+        }
+        return _.has(parent, last);
+      }
+      return _.has(parent, path);
     };
     set = function(parent, path, val) {
       var initial, key, last, _i, _len;
@@ -92,8 +112,11 @@
     };
     has = function(parent, path, fn) {
       var nested;
+      if (!hasPath(parent, path)) {
+        return false;
+      }
       nested = get(parent, path);
-      return (nested != null) && validator[fn](nested);
+      return validator[fn](nested);
     };
     test = function(parent, path, regExp) {
       var str;
@@ -167,6 +190,110 @@
         });
       }
       return false;
+    };
+    detectType = function(val) {
+      return _.find(types, function(type) {
+        var fn;
+        fn = 'is' + type;
+        return validator[fn](val);
+      });
+    };
+    getErrors = function(obj, map) {
+      var errors, numErrors;
+      errors = {};
+      if (_.isObject(map) && !_.isRegExp(map)) {
+        _.each(map, function(type, key) {
+          var detected, doesNotMatch, fn, nested, pathExists, subErrors, valid;
+          pathExists = hasPath(obj, key);
+          nested = get(obj, key);
+          detected = detectType(nested);
+          doesNotMatch = [];
+          if (_.isObject(type)) {
+            if (_.isRegExp(type)) {
+              valid = test(obj, key, type);
+              if (!valid) {
+                if (!api.isString(obj, key)) {
+                  doesNotMatch.push('String');
+                }
+                doesNotMatch.push('RegExp');
+                errors[key] = {
+                  detected: detected,
+                  doesNotMatch: doesNotMatch,
+                  pathExists: pathExists
+                };
+              }
+              return;
+            }
+            if (nested != null) {
+              if (_.isFunction(type)) {
+                valid = type(nested);
+                doesNotMatch.push('callback');
+                if (!valid) {
+                  errors[key] = {
+                    detected: detected,
+                    doesNotMatch: doesNotMatch,
+                    pathExists: pathExists
+                  };
+                }
+                return;
+              }
+              subErrors = getErrors(nested, type);
+              if (!subErrors.valid) {
+                _.each(subErrors.errors, function(err, k) {
+                  return errors[key + '.' + k] = err;
+                });
+              }
+              return;
+            }
+            errors[key] = {
+              detected: detected,
+              doesNotMatch: doesNotMatch,
+              pathExists: pathExists
+            };
+          }
+          if (!_.contains(types, type)) {
+            throw new Error('Unknown validation type');
+          }
+          fn = 'is' + type;
+          valid = has(obj, key, fn);
+          if (!valid) {
+            return errors[key] = {
+              detected: detected,
+              doesNotMatch: [type],
+              pathExists: pathExists
+            };
+          }
+        });
+      }
+      numErrors = _.keys(errors).length;
+      return {
+        valid: numErrors === 0,
+        errors: errors,
+        numErrors: numErrors
+      };
+    };
+    api.getErrors = function(parent, path, map) {
+      var detected, errors, nested, pathExists;
+      if (_.isObject(path)) {
+        return getErrors(parent, path);
+      }
+      pathExists = hasPath(parent, path);
+      nested = get(parent, path);
+      if (nested) {
+        return getErrors(nested, map);
+      }
+      detected = detectType(nested);
+      errors = {};
+      errors[path] = {
+        detected: detected,
+        doesNotMatch: ['Object'],
+        pathExists: pathExists
+      };
+      return {
+        valid: false,
+        errors: errors,
+        numErrors: 1
+      };
     };
     api.validate = function(parent, path, map) {
       var nested;
