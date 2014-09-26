@@ -75,14 +75,33 @@
 
         what: {
             nope: undefined,
-            noWay: null
+            noWay: null,
+            notANumber: 'a' * 9
         }
     };
 
     function dump(obj) {
-        var str = JSON.stringify(obj, null, ' ');
-        console.log(str);
+        var json = JSON.stringify(obj, null, '\t');
+
+        json.replace(/\\"/g,"\uFFFF"); //U+ FFFF
+        json = json.replace(/\"([^"]+)\":/g,"$1:").replace(/\uFFFF/g,"\\\"");
+
+        console.log(json);
     }
+
+    var errors = quack.getErrors(config, 'user', {
+        zipcode: quack.ARRAY
+    });
+
+    dump(errors);
+
+    var errors = quack.getErrors(config, 'resources.css', {
+        files: function(x) {
+            return _.isNumber(x);
+        }
+    });
+
+    dump(errors);
 
     var errors = quack.getErrors(config, 'what', {
         nope: quack.NUMBER,
@@ -152,7 +171,7 @@
         });
     });
 
-    describe('expecting', function () {
+    describe('null, undefined an unexisting paths', function () {
 
         it("unexisting path to not be a boolean", function () {
             var res = quack.isBoolean(config, 'foo.bar');
@@ -179,6 +198,23 @@
             expect(res).toBe(true);
         });
 
+        it("validate null undefined and NaN values as true when we expect them", function () {
+            var res = quack.validate(config, 'what', {
+                nope: quack.UNDEFINED,
+                noWay: quack.NULL,
+                notANumber: quack.NAN
+            });
+            expect(res).toBe(true);
+        });
+
+        it("validate null and undefined values as true, path that doesn't exist as false", function () {
+            var res = quack.validate(config, 'what', {
+                nope: quack.UNDEFINED,
+                noWay: quack.NULL,
+                wut: quack.UNDEFINED
+            });
+            expect(res).toBe(false);
+        });
     });
 
     describe('collection test', function () {
@@ -402,9 +438,9 @@
 
     describe('unexisting properties', function () {
 
-        it('x.y.z should be null', function () {
+        it('getting x.y.z should return undefined', function () {
             var res = quack.get(config, 'x.y.z');
-            expect(res).toBeNull();
+            expect(res).toBeUndefined();
         });
 
     });

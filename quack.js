@@ -3,11 +3,11 @@
   var Lib;
 
   Lib = (function() {
-    var api, clone, detectType, dot, get, getCollectionValidator, getErrors, has, hasApi, hasDot, hasObject, hasPath, set, test, types, validate, validator;
+    var api, clone, delegate, detectType, dot, findRegExpKey, get, getCollectionValidator, getErrors, has, hasApi, hasDot, hasObject, hasPath, regExpKeys, set, test, types, validate, validator;
+    delegate = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object'];
     validator = (function() {
-      var api, delegate, regexp;
+      var api, regexp;
       api = {};
-      delegate = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object'];
       _.each(delegate, function(type) {
         var fn;
         fn = 'is' + type;
@@ -192,10 +192,18 @@
       return false;
     };
     detectType = function(val) {
-      return _.find(types, function(type) {
+      return _.find(delegate, function(type) {
         var fn;
         fn = 'is' + type;
         console.log(fn);
+        return validator[fn](val);
+      });
+    };
+    regExpKeys = _.keys(validator.regexp);
+    findRegExpKey = function(val) {
+      return _.find(regExpKeys, function(key) {
+        var fn;
+        fn = 'is' + key;
         return validator[fn](val);
       });
     };
@@ -220,6 +228,7 @@
                 errors[key] = {
                   detected: detected,
                   doesNotMatch: doesNotMatch,
+                  pattern: type,
                   pathExists: pathExists
                 };
               }
@@ -258,9 +267,10 @@
           fn = 'is' + type;
           valid = has(obj, key, fn);
           if (!valid) {
+            doesNotMatch.push(type);
             return errors[key] = {
               detected: detected,
-              doesNotMatch: [type],
+              doesNotMatch: doesNotMatch,
               pathExists: pathExists
             };
           }

@@ -2,14 +2,14 @@
 # Kwek kwek!
 Lib = do ->
 
+    # List of types we can delegate to underscore.js
+    delegate = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object']
+
     # Validator
     validator = do ->
 
         # Initialize api object
         api = {}
-
-        # List of types we can delegate to underscore.js
-        delegate = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object']
 
         # Delegate to underscore.js
         _.each delegate, (type) ->
@@ -177,9 +177,16 @@ Lib = do ->
         return false
 
     detectType = (val) ->
-        _.find types, (type) ->
+        _.find delegate, (type) ->
             fn = 'is' + type
             console.log(fn)
+            validator[fn](val)
+
+    regExpKeys = _.keys(validator.regexp)
+
+    findRegExpKey = (val) ->
+        _.find regExpKeys, (key) ->
+            fn = 'is' + key
             validator[fn](val)
 
     getErrors = (obj, map) ->
@@ -202,7 +209,7 @@ Lib = do ->
                             unless api.isString(obj, key)
                                 doesNotMatch.push(api.STRING)
                             doesNotMatch.push(api.REGEXP)
-                            errors[key] = { detected, doesNotMatch, pathExists }
+                            errors[key] = { detected, doesNotMatch, pattern: type, pathExists }
                         return
 
                     # Validate by nested map
@@ -229,7 +236,18 @@ Lib = do ->
                 fn = 'is' + type
                 valid = has(obj, key, fn)
                 unless valid
-                    errors[key] = { detected, doesNotMatch: [type], pathExists }
+
+                    doesNotMatch.push(type)
+
+                    # pattern = null
+                    #    if _.isString(nested)
+                    #        pattern = findRegExpKey(nested)
+
+                    errors[key] = {
+                        detected: detected,
+                        doesNotMatch: doesNotMatch,
+                        pathExists: pathExists
+                    }
 
         numErrors = _.keys(errors).length
         { valid: numErrors is 0, errors: errors, numErrors: numErrors }
