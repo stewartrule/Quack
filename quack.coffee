@@ -199,8 +199,8 @@ Lib = do ->
                         valid = test(obj, key, type)
                         unless valid
                             unless api.isString(obj, key)
-                                doesNotMatch.push('String')
-                            doesNotMatch.push('RegExp')
+                                doesNotMatch.push(api.STRING)
+                            doesNotMatch.push(api.REGEXP)
                             errors[key] = { detected, doesNotMatch, pathExists }
                         return
 
@@ -236,13 +236,15 @@ Lib = do ->
     api.getErrors = (parent, path, map) ->
         if _.isObject(path)
             return getErrors(parent, path)
+        unless _.isString(path)
+            throw new Error('path/key should be a string')
         pathExists = hasPath(parent, path)
         nested = get(parent, path)
         if nested
             return getErrors(nested, map)
         detected = detectType(nested)
         errors = {}
-        errors[path] = { detected, doesNotMatch: ['Object'], pathExists }
+        errors[path] = { detected, doesNotMatch: [api.OBJECT], pathExists }
         { valid: false, errors: errors, numErrors: 1 }
 
     # Validate object or a deeper object inside the object

@@ -79,19 +79,23 @@
         }
     };
 
+    function dump(obj) {
+        var str = JSON.stringify(obj, null, ' ');
+        console.log(str);
+    }
 
     var errors = quack.getErrors(config, 'what', {
         nope: quack.NUMBER,
         noWay: quack.NULL
     });
 
-    console.log('what', errors);
+    dump(errors);
 
     var errors = quack.getErrors(config, 'media', {
         'align.vertical.y': _.isNumber
     });
 
-    console.log(errors);
+    dump(errors);
 
     var errors = quack.getErrors(config, 'media', {
         align: quack.OBJECT,
@@ -100,7 +104,7 @@
         ratios: quack.ARRAY
     });
 
-    console.log(errors);
+    dump(errors);
 
     var errors = quack.getErrors(config, 'media', {
         align: quack.NUMBER,
@@ -109,13 +113,13 @@
         ratios: /^foo$/
     });
 
-    console.log(errors);
+    dump(errors);
 
     var errors = quack.getErrors(config, 'resources.css', {
         files: quack.all(/^[0-9\-\_\.\/]+.css$/)
     });
 
-    console.log(errors);
+    dump(errors);
 
     var errors = quack.getErrors(config, 'media', {
         align: {
@@ -126,19 +130,19 @@
         }
     });
 
-    console.log(errors);
+    dump(errors);
 
     var errors = quack.getErrors(config, 'foobar', {
         'align.vertical.y': quack.STRING
     });
 
-    console.log(errors);
+    dump(errors);
 
     var errors = quack.getErrors(config, {
         'align.vertical.y': quack.STRING
     });
 
-    console.log(errors);
+    dump(errors);
 
 
     describe('regex test', function () {
