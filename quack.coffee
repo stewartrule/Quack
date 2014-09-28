@@ -3,45 +3,47 @@
 Lib = do ->
 
     # List of types we can delegate to underscore.js
-    delegate = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object']
+    types = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object']
 
     # Validator
-    validator = do ->
-
-        # Initialize api object
-        api = {}
-
-        # Delegate to underscore.js
+    typeValidator = do ->
+        v = {}
         _.each delegate, (type) ->
             fn = 'is' + type
-            api[fn] = _[fn]
+            v[fn] = _[fn]
+        v
 
-        # List of regular expressions
-        regexp = {
-            Email: /^\S+@\S+\.\S+$/
-            Zipcode: /^[0-9]{4}[A-Z]{2}$/
-            Hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/
-            Ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
-            Slug: /^[a-z0-9\-\_]+$/
-        }
+    camelCased = /^[A-Z][a-zA-Z0-9]+$/
 
-        # Make expressions publicly available
-        api.regexp = regexp
+    # RegExp Validator
+    regExpValidator = {}
 
-        # Create validation functions of all of the expressions
-        _.each regexp, (rgxp, type) ->
-            fn = 'is' + type
-            api[fn] = (val) ->
+    # List of regular expressions
+    regularExpressions = {
+        AlphaNumeric: /^[a-zA-Z0-9]+$/
+        Email: /^\S+@\S+\.\S+$/
+        Zipcode: /^[0-9]{4}[A-Z]{2}$/
+        Hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/
+        Ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+        Slug: /^[a-z0-9\-\_]+$/
+    }
+
+    # Add expressions to the validator
+    addRegExp = (mixin) ->
+        _.each mixin, (rgxp, key) ->
+            unless camelCased.test(key)
+                throw new Error('RegExp keys should be camelcased and start with a capital')
+
+            unless _.isRegExp(rgxp)
+                throw new Error('Expected RegExp, got ' + detectType(rgxp) )
+
+            regularExpressions[key] = rgxp
+
+            fn = 'is' + key
+            regExpValidator[fn] = (val) ->
                 val && rgxp.test(val)
 
-        # Create a list with names of all the validation types
-        api.types = delegate.concat(_.keys(regexp))
-
-        # Return validator API
-        api
-
-    # Shortcut to the validator types
-    types = validator.types
+    addRegExp(regularExpressions)
 
     # Check if an object has a certain API/Interface
     hasApi = (obj, methods) ->
@@ -131,7 +133,7 @@ Lib = do ->
         nested
 
     # Initialize API object
-    api = { get, set, test, clone }
+    api = { get, set, test, clone, addRegExp, regExp: regularExpressions }
 
     # Create validation methods for all of the types
     _.each types, (type) ->
@@ -139,8 +141,8 @@ Lib = do ->
         api[fn] = (parent, path) ->
             has parent, path, fn
 
-    # Make the validator publicly available for simple checks
-    api.validator = validator
+    # Make the regExpValidator publicly available for simple checks
+    api.validator = regExpValidator
 
     # Define constants which are used to check against within validate
     _.each types, (type) ->
@@ -285,7 +287,6 @@ Lib = do ->
 
     # Return Api
     api
-
 
 # Export quack
 if typeof define is 'function' and define.amd
