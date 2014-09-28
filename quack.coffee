@@ -18,7 +18,7 @@ Lib = do ->
 
         # List of regular expressions
         regexp = {
-            Email: /^.+@.+\..+$/
+            Email: /^\S+@\S+\.\S+$/
             Zipcode: /^[0-9]{4}[A-Z]{2}$/
             Hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/
             Ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
@@ -126,9 +126,7 @@ Lib = do ->
     # Get value at a given path and clone it if is an object
     clone = (parent, src) ->
         nested = get(parent, src)
-        unless nested?
-            return null
-        if _.isObject(nested)
+        if nested && _.isObject(nested)
             return _.clone(nested)
         nested
 
@@ -141,15 +139,6 @@ Lib = do ->
         api[fn] = (parent, path) ->
             has parent, path, fn
 
-    # Check if a value has a certain API/Interface
-    api.hasApi = (parent, path, methods) ->
-        if _.isArray(path)
-            return hasApi(parent, path)
-        if api.isObject(parent, path)
-            obj = api.get(parent, path)
-            return hasApi(obj, methods)
-        return false
-
     # Make the validator publicly available for simple checks
     api.validator = validator
 
@@ -157,29 +146,9 @@ Lib = do ->
     _.each types, (type) ->
         api[type.toUpperCase()] = type
 
-    # Local validation function that analyzes the object and compares it to the map
-    validate = (obj, map) ->
-        if _.isObject(map) && not _.isRegExp(map)
-            return _.all map, (type, key) ->
-                if _.isObject(type)
-                    if _.isRegExp(type)
-                        return test(obj, key, type)
-                    nested = get(obj, key)
-                    if nested?
-                        if _.isFunction(type)
-                            return type(nested)
-                        return validate(nested, type)
-                    return false
-                unless _.contains(types, type)
-                    throw new Error('Unknown validation type')
-                fn = 'is' + type
-                return has(obj, key, fn)
-        return false
-
     detectType = (val) ->
         _.find delegate, (type) ->
             fn = 'is' + type
-            console.log(fn)
             validator[fn](val)
 
     regExpKeys = _.keys(validator.regexp)
@@ -189,7 +158,7 @@ Lib = do ->
             fn = 'is' + key
             validator[fn](val)
 
-    getErrors = (obj, map) ->
+    validate = (obj, map) ->
         errors = {}
         if _.isObject(map) && not _.isRegExp(map)
             _.each map, (type, key) ->
@@ -221,7 +190,7 @@ Lib = do ->
                                 errors[key] = { detected, doesNotMatch, pathExists }
                             return
 
-                        subErrors = getErrors(nested, type)
+                        subErrors = validate(nested, type)
                         unless subErrors.valid
                             _.each subErrors.errors, (err, k) ->
                                 errors[key + '.' + k] = err
@@ -252,26 +221,20 @@ Lib = do ->
         numErrors = _.keys(errors).length
         { valid: numErrors is 0, errors: errors, numErrors: numErrors }
 
-    api.getErrors = (parent, path, map) ->
+    # Validate object or a deeper object inside the object
+    api.validate = (parent, path, map) ->
         if _.isObject(path)
-            return getErrors(parent, path)
+            return validate(parent, path)
         unless _.isString(path)
             throw new Error('path/key should be a string')
         pathExists = hasPath(parent, path)
         nested = get(parent, path)
         if nested
-            return getErrors(nested, map)
+            return validate(nested, map)
         detected = detectType(nested)
         errors = {}
         errors[path] = { detected, doesNotMatch: [api.OBJECT], pathExists }
         { valid: false, errors: errors, numErrors: 1 }
-
-    # Validate object or a deeper object inside the object
-    api.validate = (parent, path, map) ->
-        if _.isObject(path)
-            return validate(parent, path)
-        nested = get(parent, path)
-        nested && validate(nested, map)
 
     # Returns a validator function to test the values of an array of object
     getCollectionValidator = (method, type) ->
@@ -310,6 +273,15 @@ Lib = do ->
     api.range = (min, max) ->
         api.all (value) ->
             value >= min && value <= max
+
+    # Check if a value has a certain API/Interface
+    api.hasApi = (parent, path, methods) ->
+        if _.isArray(path)
+            return hasApi(parent, path)
+        if api.isObject(parent, path)
+            obj = api.get(parent, path)
+            return hasApi(obj, methods)
+        return false
 
     # Return Api
     api

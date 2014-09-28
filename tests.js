@@ -89,13 +89,13 @@
         console.log(json);
     }
 
-    var errors = quack.getErrors(config, 'user', {
+    var errors = quack.validate(config, 'user', {
         zipcode: quack.ARRAY
     });
 
     dump(errors);
 
-    var errors = quack.getErrors(config, 'resources.css', {
+    var errors = quack.validate(config, 'resources.css', {
         files: function(x) {
             return _.isNumber(x);
         }
@@ -103,20 +103,20 @@
 
     dump(errors);
 
-    var errors = quack.getErrors(config, 'what', {
+    var errors = quack.validate(config, 'what', {
         nope: quack.NUMBER,
         noWay: quack.NULL
     });
 
     dump(errors);
 
-    var errors = quack.getErrors(config, 'media', {
+    var errors = quack.validate(config, 'media', {
         'align.vertical.y': _.isNumber
     });
 
     dump(errors);
 
-    var errors = quack.getErrors(config, 'media', {
+    var errors = quack.validate(config, 'media', {
         align: quack.OBJECT,
         'Xalign.vertical.y': quack.NUMBER,
         src: quack.ZIPCODE,
@@ -125,7 +125,7 @@
 
     dump(errors);
 
-    var errors = quack.getErrors(config, 'media', {
+    var errors = quack.validate(config, 'media', {
         align: quack.NUMBER,
         'align.vertical.y': quack.STRING,
         src: quack.ARRAY,
@@ -134,13 +134,13 @@
 
     dump(errors);
 
-    var errors = quack.getErrors(config, 'resources.css', {
+    var errors = quack.validate(config, 'resources.css', {
         files: quack.all(/^[0-9\-\_\.\/]+.css$/)
     });
 
     dump(errors);
 
-    var errors = quack.getErrors(config, 'media', {
+    var errors = quack.validate(config, 'media', {
         align: {
             vertical: {
                 x: quack.ARRAY,
@@ -151,13 +151,13 @@
 
     dump(errors);
 
-    var errors = quack.getErrors(config, 'foobar', {
+    var errors = quack.validate(config, 'foobar', {
         'align.vertical.y': quack.STRING
     });
 
     dump(errors);
 
-    var errors = quack.getErrors(config, {
+    var errors = quack.validate(config, {
         'align.vertical.y': quack.STRING
     });
 
@@ -204,7 +204,7 @@
                 noWay: quack.NULL,
                 notANumber: quack.NAN
             });
-            expect(res).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
         it("validate null and undefined values as true, path that doesn't exist as false", function () {
@@ -213,59 +213,59 @@
                 noWay: quack.NULL,
                 wut: quack.UNDEFINED
             });
-            expect(res).toBe(false);
+            expect(res.valid).toBe(false);
         });
     });
 
     describe('collection test', function () {
 
         it("should match every value as an ip-address", function () {
-            var valid = quack.validate(config, 'security.ip', {
+            var res = quack.validate(config, 'security.ip', {
                 blocked: quack.all(quack.validator.regexp.Ip)
             });
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
         it("should match any of the values to 'Philips'", function () {
-            var valid = quack.validate(config, 'security', {
+            var res = quack.validate(config, 'security', {
                 companies: quack.any(/^Philips$/)
             });
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
         it("should validate whitelist", function () {
-            var valid = quack.validate(config, 'security', {
+            var res = quack.validate(config, 'security', {
                 companies: quack.whitelist(['LG', 'Philips', 'Samsung'])
             });
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
         it("should validate blacklist", function () {
-            var valid = quack.validate(config, 'security', {
+            var res = quack.validate(config, 'security', {
                 companies: quack.blacklist(['xSamsung', 'xPhilips'])
             });
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
         it("should validate range", function () {
-            var valid = quack.validate(config, {
+            var res = quack.validate(config, {
                 coordinates: quack.range(10, 90)
             });
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
         it("should test if resources.css.files only contains css filenames", function () {
-            var valid = quack.validate(config, 'resources.css', {
+            var res = quack.validate(config, 'resources.css', {
                 files: quack.all(/^[a-z0-9\-\_\.\/]+.css$/)
             });
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
         it("test every value in an object'", function () {
-            var valid = quack.validate(config, {
+            var res = quack.validate(config, {
                 coordinates: quack.any(_.isNumber)
             });
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
     });
 
@@ -282,11 +282,11 @@
         });
 
         it("Validate correctly on boolean constants", function () {
-            var valid = quack.validate(config, {
+            var res = quack.validate(config, {
                 debug: quack.BOOLEAN,
                 displayErrors: quack.BOOLEAN
             });
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
     });
@@ -301,23 +301,23 @@
 
         it("should validate email and zipcode", function () {
 
-            var valid = quack.validate(config, 'user', {
+            var res = quack.validate(config, 'user', {
                 name: quack.STRING,
                 email: quack.EMAIL,
                 zipcode: quack.ZIPCODE
             });
 
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
         it("should validate hex colors", function () {
 
-            var valid = quack.validate(config, 'colors', {
+            var res = quack.validate(config, 'colors', {
                 header: quack.HEX,
                 body: quack.HEX
             });
 
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
         it("should recognize invalid hex value", function () {
@@ -331,19 +331,19 @@
 
         it("should validate positive on multiple keys", function () {
 
-            var valid = quack.validate(config, 'media', {
+            var res = quack.validate(config, 'media', {
                 align: quack.OBJECT,
                 'align.vertical.y': quack.NUMBER,
                 src: quack.STRING,
                 ratios: quack.ARRAY
             });
 
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
         it("should validate positive on multiple keys through an object", function () {
 
-            var valid = quack.validate(config, 'media', {
+            var res = quack.validate(config, 'media', {
                 align: {
                     vertical: {
                         x: quack.STRING,
@@ -352,33 +352,33 @@
                 }
             });
 
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
         it("should validate negative on at least 1 key", function () {
 
-            var valid = quack.validate(config, 'media', {
+            var res = quack.validate(config, 'media', {
                 align: quack.OBJECT,
                 src: quack.STRING,
                 ratios: quack.REGEXP
             });
 
-            expect(valid).not.toBe(true);
+            expect(res.valid).not.toBe(true);
         });
 
         it("should validate regex literals", function () {
 
-            var valid = quack.validate(config, {
+            var res = quack.validate(config, {
                 'user.name': /^[a-zA-Z]+$/,
                 'media.src': /^[a-z\/]+$/
             });
 
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
         it("should validate positive on a map with a mixed validation structure", function () {
 
-            var valid = quack.validate(config, {
+            var res = quack.validate(config, {
                 'media.align': {
                     vertical: {
                         x: quack.STRING,
@@ -392,7 +392,7 @@
                 'user.name':  /^[a-zA-Z]+$/
             });
 
-            expect(valid).toBe(true);
+            expect(res.valid).toBe(true);
         });
 
         it("should throw error exception because of unknown validation type", function () {
