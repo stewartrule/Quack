@@ -18,6 +18,7 @@
         var response;
         return response = {
           valid: true,
+          value: value,
           expected: expected,
           detected: detectPrimitive(value),
           constraints: {},
@@ -54,11 +55,11 @@
             }
             if (_.isNumber(options.min) && value < options.min) {
               response.valid = false;
-              response.constraints.min = false;
+              response.constraints.min = options.min;
             }
-            if (_.isNumber(options.max) && value < options.max) {
+            if (_.isNumber(options.max) && value > options.max) {
               response.valid = false;
-              response.constraints.max = false;
+              response.constraints.max = options.max;
             }
             return response;
           };
@@ -75,11 +76,11 @@
             }
             if (_.isNumber(options.min) && value < options.min) {
               response.valid = false;
-              response.constraints.min = false;
+              response.constraints.min = options.min;
             }
-            if (_.isNumber(options.max) && value < options.max) {
+            if (_.isNumber(options.max) && value > options.max) {
               response.valid = false;
-              response.constraints.max = false;
+              response.constraints.max = options.max;
             }
             return response;
           };
@@ -137,7 +138,6 @@
             _.each(['global', 'multiline', 'ignoreCase', 'lastIndex'], function(param) {
               if (_.has(options, param)) {
                 if (value[param] !== options[param]) {
-                  console.log(value, options[param], value[param]);
                   return response.difference[param] = {
                     detected: value[param],
                     expected: options[param]
@@ -460,6 +460,7 @@
         });
         collectionResponse.valid = valid;
         collectionResponse.errors = errors;
+        collectionResponse.numErrors = _.keys(errors).length;
         return collectionResponse;
       };
     };

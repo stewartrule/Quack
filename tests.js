@@ -107,6 +107,12 @@
     }
 
     var response = quack.validate(config, {
+        coordinates: quack.all(quack.integer({ min: 20, max: 90 }))
+    });
+
+    dump(response);
+
+    var response = quack.validate(config, {
         regexp: {
             Email: quack.regExp({
                 global: true,

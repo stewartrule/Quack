@@ -13,7 +13,14 @@ Lib = do ->
     validators = do () ->
 
         createResponse = (value, expected) ->
-            response = { valid: true, expected: expected, detected: detectPrimitive(value), constraints: {}, regExp: false }
+            response = {
+                valid: true,
+                value: value,
+                expected: expected,
+                detected: detectPrimitive(value),
+                constraints: {},
+                regExp: false
+            }
 
         return {
             object: (options) ->
@@ -38,10 +45,10 @@ Lib = do ->
                         return response
                     if _.isNumber(options.min) and value < options.min
                         response.valid = false
-                        response.constraints.min = false
-                    if _.isNumber(options.max) and value < options.max
+                        response.constraints.min = options.min
+                    if _.isNumber(options.max) and value > options.max
                         response.valid = false
-                        response.constraints.max = false
+                        response.constraints.max = options.max
                     response
 
             integer: (options) ->
@@ -54,10 +61,10 @@ Lib = do ->
                         return response
                     if _.isNumber(options.min) and value < options.min
                         response.valid = false
-                        response.constraints.min = false
-                    if _.isNumber(options.max) and value < options.max
+                        response.constraints.min = options.min
+                    if _.isNumber(options.max) and value > options.max
                         response.valid = false
-                        response.constraints.max = false
+                        response.constraints.max = options.max
                     response
 
             nan: () ->
@@ -100,7 +107,6 @@ Lib = do ->
                     _.each ['global', 'multiline', 'ignoreCase', 'lastIndex'], (param) ->
                         if _.has(options, param)
                             if value[param] isnt options[param]
-                                console.log value, options[param], value[param]
                                 response.difference[param] = {
                                     detected: value[param],
                                     expected: options[param]
@@ -205,7 +211,6 @@ Lib = do ->
                     response.valid = valid
                     unless valid
                         response.missing = missing
-
                     response
         }
 
@@ -271,7 +276,7 @@ Lib = do ->
         else
             parent[path] = val
 
-    # Check if object has a value at a given path that passes the given truth test
+    # Check if object has a value at a given path that passes the given validator
     has = (parent, path, validator) ->
         unless hasPath(parent, path)
             return false
@@ -362,6 +367,7 @@ Lib = do ->
 
             collectionResponse.valid = valid
             collectionResponse.errors = errors
+            collectionResponse.numErrors = _.keys(errors).length
             collectionResponse
 
     # Checks if all of the values in the list pass the predicate truth test
