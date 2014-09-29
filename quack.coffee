@@ -356,7 +356,7 @@ Lib = do ->
             isCollection = _.isArray(value) or _.isObject(value)
 
             unless isCollection
-                return multiResponse
+                return collectionResponse
 
             responses = _.map value, (item) ->
                 validator(item)

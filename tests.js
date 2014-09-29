@@ -136,7 +136,7 @@
         )
     });
 
-    //dump(response);
+    dump(response);
 
     var response = quack.validate(config, {
         agenda: quack.all(

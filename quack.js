@@ -449,7 +449,7 @@
         };
         isCollection = _.isArray(value) || _.isObject(value);
         if (!isCollection) {
-          return multiResponse;
+          return collectionResponse;
         }
         responses = _.map(value, function(item) {
           return validator(item);
