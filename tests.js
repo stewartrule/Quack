@@ -84,6 +84,14 @@
             nope: undefined,
             noWay: null,
             notANumber: 'a' * 9
+        },
+
+        regexp: {
+            Email: /^.+@.+\..+$/g,
+            Zipcode: /^[0-9]{4}[A-Z]{2}$/,
+            Hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/,
+            Ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+            Slug: /^[a-z0-9\-\_]+$/
         }
     };
 
@@ -99,6 +107,27 @@
     }
 
     var response = quack.validate(config, {
+        regexp: {
+            Email: quack.regExp({
+                global: true,
+                multiline: false,
+                ignoreCase: false,
+                lastIndex: 0
+            }),
+            Ip: quack.regExp({
+                global: true,
+                multiline: false,
+                ignoreCase: false,
+                lastIndex: 1
+            })
+        }
+    });
+
+    dump(response);
+
+    return;
+
+    var response = quack.validate(config, {
         what: {
             nope: quack.nil(),
             noWay: quack.nil(),
@@ -112,7 +141,7 @@
         'css': quack.object(),
         'css.files': quack.number(),
         js: {
-            files: quack.all(quack.regExp(/combined/))
+            files: quack.all(quack.pattern(/combined/))
         }
     });
 
@@ -121,7 +150,7 @@
     var response = quack.validate(config, {
         coordinates: quack.nil(),
         user: {
-            // email: quack.regExp(/^\S+@\S+\_\S+$/)
+            // email: quack.pattern(/^\S+@\S+\_\S+$/)
             email: /^\S+@\S+\_\S+$/
         },
         dom: {
@@ -150,7 +179,7 @@
             }
         },
         colors: {
-            header: quack.regExp(/^#?([a-f0-9]{6}|[a-f0-9]{3})$/)
+            header: quack.pattern(/^#?([a-f0-9]{6}|[a-f0-9]{3})$/)
         },
         'api.book.getEan': quack.func(),
         'api.book': quack.api(['getEan', 'getCosts', 'getTitleS'])

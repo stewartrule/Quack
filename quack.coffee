@@ -13,7 +13,7 @@ Lib = do ->
     validators = do () ->
 
         createResponse = (value, expected) ->
-            response = { valid: true, expected: expected, received: detectPrimitive(value), constraints: {}, regExp: false }
+            response = { valid: true, expected: expected, detected: detectPrimitive(value), constraints: {}, regExp: false }
 
         return {
             object: (options) ->
@@ -88,6 +88,27 @@ Lib = do ->
                         response.valid = false
                     response
 
+            regExp: (options) ->
+                options or= {}
+                (value) ->
+                    response = createResponse(value, 'RegExp')
+                    response.difference = {}
+                    unless _.isRegExp(value)
+                        response.valid = false
+                        return response
+
+                    _.each ['global', 'multiline', 'ignoreCase', 'lastIndex'], (param) ->
+                        if _.has(options, param)
+                            if value[param] isnt options[param]
+                                console.log value, options[param], value[param]
+                                response.difference[param] = {
+                                    detected: value[param],
+                                    expected: options[param]
+                                }
+
+                    response.valid = _.keys(response.difference).length is 0
+                    response
+
             array: (options) ->
                 options or= {}
                 (value) ->
@@ -122,14 +143,14 @@ Lib = do ->
                         response.constraints.max = false
                     response
 
-            regExp: (regExp) ->
+            pattern: (regExp) ->
                 (value) ->
                     response = createResponse(value, 'String')
                     response.regExp = true
-                    response.received = value
+                    response.detected = value
                     unless _.isString(value)
                         response.valid = false
-                        response.received = detectPrimitive(value)
+                        response.detected = detectPrimitive(value)
                         return response
                     response.expected = regExp.toString()
                     response.valid = regExp.test(value)
@@ -285,7 +306,7 @@ Lib = do ->
                         errors[key] = response
 
                 else if _.isRegExp(validator)
-                    validator = validators.regExp(validator)
+                    validator = validators.pattern(validator)
                     response = validator(nested)
                     response.pathExists = pathExists
                     unless response.valid
@@ -318,11 +339,11 @@ Lib = do ->
     getCollectionValidator = (method, validator) ->
         (value) ->
 
-            multiResponse = {
+            collectionResponse = {
                 valid: false,
                 errors: {},
                 expected: ['Array', 'Object'],
-                received: detectPrimitive(value)
+                detected: detectPrimitive(value)
             }
 
             isCollection = _.isArray(value) or _.isObject(value)
@@ -339,13 +360,9 @@ Lib = do ->
             errors = _.filter responses, (response) ->
                 not response.valid
 
-            multiResponse.valid = valid
-            multiResponse.errors = errors
-            multiResponse
-
-    api.hasPaths = (parent, paths) ->
-        _.all paths, (path) ->
-            hasPath parent, path
+            collectionResponse.valid = valid
+            collectionResponse.errors = errors
+            collectionResponse
 
     # Checks if all of the values in the list pass the predicate truth test
     api.all = (validator) ->

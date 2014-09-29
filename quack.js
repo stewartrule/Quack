@@ -19,7 +19,7 @@
         return response = {
           valid: true,
           expected: expected,
-          received: detectPrimitive(value),
+          detected: detectPrimitive(value),
           constraints: {},
           regExp: false
         };
@@ -124,6 +124,31 @@
             return response;
           };
         },
+        regExp: function(options) {
+          options || (options = {});
+          return function(value) {
+            var response;
+            response = createResponse(value, 'RegExp');
+            response.difference = {};
+            if (!_.isRegExp(value)) {
+              response.valid = false;
+              return response;
+            }
+            _.each(['global', 'multiline', 'ignoreCase', 'lastIndex'], function(param) {
+              if (_.has(options, param)) {
+                if (value[param] !== options[param]) {
+                  console.log(value, options[param], value[param]);
+                  return response.difference[param] = {
+                    detected: value[param],
+                    expected: options[param]
+                  };
+                }
+              }
+            });
+            response.valid = _.keys(response.difference).length === 0;
+            return response;
+          };
+        },
         array: function(options) {
           options || (options = {});
           return function(value) {
@@ -170,15 +195,15 @@
             return response;
           };
         },
-        regExp: function(regExp) {
+        pattern: function(regExp) {
           return function(value) {
             var response;
             response = createResponse(value, 'String');
             response.regExp = true;
-            response.received = value;
+            response.detected = value;
             if (!_.isString(value)) {
               response.valid = false;
-              response.received = detectPrimitive(value);
+              response.detected = detectPrimitive(value);
               return response;
             }
             response.expected = regExp.toString();
@@ -368,7 +393,7 @@
               return errors[key] = response;
             }
           } else if (_.isRegExp(validator)) {
-            validator = validators.regExp(validator);
+            validator = validators.pattern(validator);
             response = validator(nested);
             response.pathExists = pathExists;
             if (!response.valid) {
@@ -413,12 +438,12 @@
     };
     getCollectionValidator = function(method, validator) {
       return function(value) {
-        var errors, isCollection, multiResponse, responses, valid;
-        multiResponse = {
+        var collectionResponse, errors, isCollection, responses, valid;
+        collectionResponse = {
           valid: false,
           errors: {},
           expected: ['Array', 'Object'],
-          received: detectPrimitive(value)
+          detected: detectPrimitive(value)
         };
         isCollection = _.isArray(value) || _.isObject(value);
         if (!isCollection) {
@@ -433,15 +458,10 @@
         errors = _.filter(responses, function(response) {
           return !response.valid;
         });
-        multiResponse.valid = valid;
-        multiResponse.errors = errors;
-        return multiResponse;
+        collectionResponse.valid = valid;
+        collectionResponse.errors = errors;
+        return collectionResponse;
       };
-    };
-    api.hasPaths = function(parent, paths) {
-      return _.all(paths, function(path) {
-        return hasPath(parent, path);
-      });
     };
     api.all = function(validator) {
       return getCollectionValidator('all', validator);
