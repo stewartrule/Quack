@@ -1,54 +1,185 @@
-
 # Kwek kwek!
+
 Lib = do ->
 
-    # List of types we can delegate to underscore.js
-    types = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object']
+    # List of primitives
+    primitives = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object']
 
-    # Validator
-    typeValidator = do ->
-        v = {}
-        _.each delegate, (type) ->
+    detectPrimitive = (value) ->
+        _.find primitives, (type) ->
             fn = 'is' + type
-            v[fn] = _[fn]
-        v
+            _[fn](value)
 
-    camelCased = /^[A-Z][a-zA-Z0-9]+$/
+    validators = do () ->
 
-    # RegExp Validator
-    regExpValidator = {}
+        createResponse = (value, expected) ->
+            response = { valid: true, expected: expected, received: detectPrimitive(value), constraints: {}, regExp: false }
 
-    # List of regular expressions
-    regularExpressions = {
-        AlphaNumeric: /^[a-zA-Z0-9]+$/
-        Email: /^\S+@\S+\.\S+$/
-        Zipcode: /^[0-9]{4}[A-Z]{2}$/
-        Hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/
-        Ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
-        Slug: /^[a-z0-9\-\_]+$/
-    }
+        return {
+            object: (options) ->
+                options or= {}
+                (value) ->
+                    response = createResponse(value, 'Object')
+                    unless _.isObject(value)
+                        response.valid = false
+                        return response
+                    if _.isNumber(options.length)
+                        unless _.keys(value).length is options.length
+                            response.valid = false
+                            response.constraints.length = false
+                    response
 
-    # Add expressions to the validator
-    addRegExp = (mixin) ->
-        _.each mixin, (rgxp, key) ->
-            unless camelCased.test(key)
-                throw new Error('RegExp keys should be camelcased and start with a capital')
+            number: (options) ->
+                options or= {}
+                (value) ->
+                    response = createResponse(value, 'Number')
+                    unless _.isNumber(value)
+                        response.valid = false
+                        return response
+                    if _.isNumber(options.min) and value < options.min
+                        response.valid = false
+                        response.constraints.min = false
+                    if _.isNumber(options.max) and value < options.max
+                        response.valid = false
+                        response.constraints.max = false
+                    response
 
-            unless _.isRegExp(rgxp)
-                throw new Error('Expected RegExp, got ' + detectType(rgxp) )
+            integer: (options) ->
+                options or= {}
+                (value) ->
+                    response = createResponse(value, 'Integer')
+                    isInt = _.isNumber(value) && parseInt(value, 10) is value
+                    unless isInt
+                        response.valid = false
+                        return response
+                    if _.isNumber(options.min) and value < options.min
+                        response.valid = false
+                        response.constraints.min = false
+                    if _.isNumber(options.max) and value < options.max
+                        response.valid = false
+                        response.constraints.max = false
+                    response
 
-            regularExpressions[key] = rgxp
+            nan: () ->
+                (value) ->
+                    response = createResponse(value, 'NaN')
+                    unless _.isNaN(value)
+                        response.valid = false
+                    response
 
-            fn = 'is' + key
-            regExpValidator[fn] = (val) ->
-                val && rgxp.test(val)
+            nil: () ->
+                (value) ->
+                    response = createResponse(value, 'Null')
+                    unless _.isNaN(value)
+                        response.valid = false
+                    response
 
-    addRegExp(regularExpressions)
+            undef: () ->
+                (value) ->
+                    response = createResponse(value, 'Undefined')
+                    unless _.isUndefined(value)
+                        response.valid = false
+                    response
 
-    # Check if an object has a certain API/Interface
-    hasApi = (obj, methods) ->
-        _.all methods, (method) ->
-            _.has(obj, method) && _.isFunction(obj[method])
+            bool: () ->
+                (value) ->
+                    response = createResponse(value, 'Boolean')
+                    unless _.isBoolean(value)
+                        response.valid = false
+                    response
+
+            array: (options) ->
+                options or= {}
+                (value) ->
+                    response = createResponse(value, 'Array')
+                    unless _.isArray(value)
+                        response.valid = false
+                    response
+
+            func: (options) ->
+                options or= {}
+                (value) ->
+                    response = createResponse(value, 'Function')
+                    unless _.isFunction(value)
+                        response.valid = false
+                    if _.isNumber(options.length) and options.length isnt value.length
+                        response.valid = false
+                        response.constraints.length = false
+                    response
+
+            string: () ->
+                response = createResponse(value, 'String')
+                unless _.isString(value)
+                    response.valid = false
+                    return response
+                if _.isNumber(options.min) and value.length < options.min
+                    response.valid = false
+                    response.constraints.min = false
+                if _.isNumber(options.max) and value.length < options.max
+                    response.valid = false
+                    response.constraints.max = false
+                response
+
+            regExp: (regExp) ->
+                (value) ->
+                    response = createResponse(value, regExp.toString())
+                    response.regExp = true
+                    response.received = value
+                    unless _.isString(value)
+                        response.valid = false
+                    unless regExp.test(value)
+                        response.valid = false
+                    response
+
+            date: (options) ->
+                response = createResponse(value, 'Date')
+                unless _.isDate(value)
+                    response.valid = false
+                    return response
+                time = value.getTime()
+                if _.isDate(options.min)
+                    minTime = options.min.getTime()
+                    if time < minTime
+                        response.valid = false
+                        response.constraints.min = false
+                if _.isDate(options.max)
+                    maxTime = options.max.getTime()
+                    if time > maxTime
+                        response.valid = false
+                        response.constraints.max = false
+                response
+
+            element: () ->
+                (value) ->
+                    response = createResponse(value, 'Element')
+                    unless _.isElement(value)
+                        response.valid = false
+                    response
+
+            api: (methods) ->
+                (value) ->
+                    response = createResponse(value, 'Api')
+                    unless _.isObject(value)
+                        response.valid = false
+
+                    if _.isArray(methods)
+
+                        response.valid = _.all methods, (method) ->
+                            _.has(value, method) and _.isFunction(value[method])
+
+                    else if _.isObject(methods)
+
+                        response.valid = _.all methods, (numArgs, method) ->
+                            unless _.has(value, method)
+                                return false
+                            fn = value[method]
+                            _.isFunction(fn) and fn.length is numArgs
+                    else
+                        response.constraints.methods = false
+
+                    response
+
+        }
 
     # Check if object has a key and that key holds an object
     hasObject = (parent, key) ->
@@ -112,18 +243,16 @@ Lib = do ->
             parent[path] = val
 
     # Check if object has a value at a given path that passes the given truth test
-    has = (parent, path, fn) ->
+    has = (parent, path, validator) ->
         unless hasPath(parent, path)
             return false
         nested = get(parent, path)
-        validator[fn](nested)
+        validator(nested)
 
     # Check if object has a value at a given path that matches the given regex
     test = (parent, path, regExp) ->
-        unless api.isString(parent, path)
-            return false
         str = get(parent, path)
-        regExp.test(str)
+        str && _.isString(str) && regExp.test(str)
 
     # Get value at a given path and clone it if is an object
     clone = (parent, src) ->
@@ -132,98 +261,40 @@ Lib = do ->
             return _.clone(nested)
         nested
 
-    # Initialize API object
-    api = { get, set, test, clone, addRegExp, regExp: regularExpressions }
-
-    # Create validation methods for all of the types
-    _.each types, (type) ->
-        fn = 'is' + type
-        api[fn] = (parent, path) ->
-            has parent, path, fn
-
-    # Make the regExpValidator publicly available for simple checks
-    api.validator = regExpValidator
-
-    # Define constants which are used to check against within validate
-    _.each types, (type) ->
-        api[type.toUpperCase()] = type
-
-    detectType = (val) ->
-        _.find delegate, (type) ->
-            fn = 'is' + type
-            validator[fn](val)
-
-    regExpKeys = _.keys(validator.regexp)
-
-    findRegExpKey = (val) ->
-        _.find regExpKeys, (key) ->
-            fn = 'is' + key
-            validator[fn](val)
+    api = { get, set, test, clone }
 
     validate = (obj, map) ->
         errors = {}
-        if _.isObject(map) && not _.isRegExp(map)
-            _.each map, (type, key) ->
-
+        if _.isObject(map)
+            _.each map, (validator, key) ->
                 pathExists = hasPath(obj, key)
                 nested = get(obj, key)
-                detected = detectType(nested)
 
-                doesNotMatch = []
+                if _.isFunction(validator)
+                    response = validator(nested)
+                    response.pathExists = pathExists
+                    unless response.valid
+                        errors[key] = response
 
-                if _.isObject(type)
+                else if _.isRegExp(validator)
+                    validator = validators.regExp(validator)
+                    response = validator(nested)
+                    response.pathExists = pathExists
+                    unless response.valid
+                        errors[key] = response
 
-                    # Validate by regex
-                    if _.isRegExp(type)
-                        valid = test(obj, key, type)
-                        unless valid
-                            unless api.isString(obj, key)
-                                doesNotMatch.push(api.STRING)
-                            doesNotMatch.push(api.REGEXP)
-                            errors[key] = { detected, doesNotMatch, pattern: type, pathExists }
-                        return
+                else if _.isObject(validator)
+                    nestedErrors = validate(nested, validator)
+                    unless nestedErrors.valid
+                        _.each nestedErrors.errors, (err, k) ->
+                            errors[key + '.' + k] = err
 
-                    # Validate by nested map
-                    if nested?
-                        if _.isFunction(type)
-                            valid = type(nested)
-                            doesNotMatch.push('callback')
-                            unless valid
-                                errors[key] = { detected, doesNotMatch, pathExists }
-                            return
-
-                        subErrors = validate(nested, type)
-                        unless subErrors.valid
-                            _.each subErrors.errors, (err, k) ->
-                                errors[key + '.' + k] = err
-                        return
-
-                    errors[key] = { detected, doesNotMatch, pathExists }
-
-                unless _.contains(types, type)
-                    throw new Error('Unknown validation type')
-
-                # Validate by constant
-                fn = 'is' + type
-                valid = has(obj, key, fn)
-                unless valid
-
-                    doesNotMatch.push(type)
-
-                    # pattern = null
-                    #    if _.isString(nested)
-                    #        pattern = findRegExpKey(nested)
-
-                    errors[key] = {
-                        detected: detected,
-                        doesNotMatch: doesNotMatch,
-                        pathExists: pathExists
-                    }
+                else
+                    throw new Error('unknown validator type')
 
         numErrors = _.keys(errors).length
         { valid: numErrors is 0, errors: errors, numErrors: numErrors }
 
-    # Validate object or a deeper object inside the object
     api.validate = (parent, path, map) ->
         if _.isObject(path)
             return validate(parent, path)
@@ -233,59 +304,33 @@ Lib = do ->
         nested = get(parent, path)
         if nested
             return validate(nested, map)
-        detected = detectType(nested)
-        errors = {}
-        errors[path] = { detected, doesNotMatch: [api.OBJECT], pathExists }
-        { valid: false, errors: errors, numErrors: 1 }
+        primitive = detectPrimitive(nested)
+        { valid: false, pathExists: pathExists, primitive: primitive }
 
-    # Returns a validator function to test the values of an array of object
-    getCollectionValidator = (method, type) ->
+    # Returns a validator function to test the values of an array
+    getArrayValidator = (method, validator) ->
         (value) ->
-            if _.isArray(value) or _.isObject(value)
-                return _[method] value, (item) ->
-                    if _.isRegExp(type)
-                        return type.test(item)
-                    if _.contains(types, type)
-                        fn = 'is' + type
-                        return validator[fn](item)
-                    if _.isFunction(type)
-                        return type(item)
-                    throw new Error('Unknown validation type to validate collections')
-            return false
+            responses = _.map value, (item) ->
+                validator(item)
+
+            valid = _[method] responses, (response) ->
+                response.valid
+
+            errors = _.filter responses, (response) ->
+                not response.valid
+
+            { valid: valid, errors: errors, expected: 'Array', received: detectPrimitive(value) }
 
     # Checks if all of the values in the list pass the predicate truth test
-    api.all = (type) ->
-        getCollectionValidator('all', type)
+    api.all = (validator) ->
+        getArrayValidator('all', validator)
 
     # Checks if any of the values in the list pass the predicate truth test
-    api.any = (type) ->
-        getCollectionValidator('any', type)
+    api.any = (validator) ->
+        getArrayValidator('any', validator)
 
-    # Checks if all of the values in the list are in the whitelist
-    api.whitelist = (values) ->
-        api.all (value) ->
-            _.contains(values, value)
+    _.extend api, validators
 
-    # Checks if none of the values in the list are in the blacklist
-    api.blacklist = (values) ->
-        api.all (value) ->
-            not _.contains(values, value)
-
-    # Checks if all of the values in the list are in a certain range
-    api.range = (min, max) ->
-        api.all (value) ->
-            value >= min && value <= max
-
-    # Check if a value has a certain API/Interface
-    api.hasApi = (parent, path, methods) ->
-        if _.isArray(path)
-            return hasApi(parent, path)
-        if api.isObject(parent, path)
-            obj = api.get(parent, path)
-            return hasApi(obj, methods)
-        return false
-
-    # Return Api
     api
 
 # Export quack
@@ -298,5 +343,3 @@ else if typeof exports is 'object'
 else
     # Global
     window.quack = Lib
-
-
