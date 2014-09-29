@@ -163,22 +163,24 @@ Lib = do ->
                     response
 
             date: (options) ->
-                response = createResponse(value, 'Date')
-                unless _.isDate(value)
-                    response.valid = false
-                    return response
-                time = value.getTime()
-                if _.isDate(options.min)
-                    minTime = options.min.getTime()
-                    if time < minTime
+                options or= {}
+                (value) ->
+                    response = createResponse(value, 'Date')
+                    unless _.isDate(value)
                         response.valid = false
-                        response.constraints.min = false
-                if _.isDate(options.max)
-                    maxTime = options.max.getTime()
-                    if time > maxTime
-                        response.valid = false
-                        response.constraints.max = false
-                response
+                        return response
+                    time = value.getTime()
+                    if _.isDate(options.min)
+                        minTime = options.min.getTime()
+                        if time < minTime
+                            response.valid = false
+                            response.constraints.min = false
+                    if _.isDate(options.max)
+                        maxTime = options.max.getTime()
+                        if time > maxTime
+                            response.valid = false
+                            response.constraints.max = false
+                    response
 
             element: () ->
                 (value) ->
@@ -346,7 +348,7 @@ Lib = do ->
 
             collectionResponse = {
                 valid: false,
-                errors: {},
+                errors: [],
                 expected: ['Array', 'Object'],
                 detected: detectPrimitive(value)
             }

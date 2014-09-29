@@ -92,8 +92,15 @@
             Hex: /^#?([a-f0-9]{6}|[a-f0-9]{3})$/,
             Ip: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
             Slug: /^[a-z0-9\-\_]+$/
-        }
+        },
+
+        agenda: [
+            { start: new Date(2014, 3, 10, 12, 30), stop: new Date(2014, 3, 10, 13, 30) },
+            { start: new Date(2014, 3, 11, 12, 30), stop: new Date(2014, 3, 11, 13, 30) },
+            { start: new Date(2014, 3, 12, 12, 30), stop: new Date(2014, 3, 12, 13, 30) }
+        ]
     };
+
 
     function unquoteJsonKeys(json) {
         json.replace(/\\"/g,"\uFFFF"); //U+ FFFF
@@ -105,6 +112,21 @@
         json = unquoteJsonKeys(json);
         console.log(json);
     }
+
+    var response = quack.validate(config, {
+        agenda: quack.all(
+            quack.all(
+                quack.date({
+                    min: new Date(2014, 3, 10, 13, 30),
+                    max: new Date(2014, 3, 12, 13, 30)
+                })
+            )
+        )
+    });
+
+    dump(response);
+
+    return;
 
     var response = quack.validate(config, {
         coordinates: quack.all(quack.integer({ min: 20, max: 90 }))
@@ -131,7 +153,6 @@
 
     dump(response);
 
-    return;
 
     var response = quack.validate(config, {
         what: {

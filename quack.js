@@ -212,28 +212,31 @@
           };
         },
         date: function(options) {
-          var maxTime, minTime, response, time;
-          response = createResponse(value, 'Date');
-          if (!_.isDate(value)) {
-            response.valid = false;
+          options || (options = {});
+          return function(value) {
+            var maxTime, minTime, response, time;
+            response = createResponse(value, 'Date');
+            if (!_.isDate(value)) {
+              response.valid = false;
+              return response;
+            }
+            time = value.getTime();
+            if (_.isDate(options.min)) {
+              minTime = options.min.getTime();
+              if (time < minTime) {
+                response.valid = false;
+                response.constraints.min = false;
+              }
+            }
+            if (_.isDate(options.max)) {
+              maxTime = options.max.getTime();
+              if (time > maxTime) {
+                response.valid = false;
+                response.constraints.max = false;
+              }
+            }
             return response;
-          }
-          time = value.getTime();
-          if (_.isDate(options.min)) {
-            minTime = options.min.getTime();
-            if (time < minTime) {
-              response.valid = false;
-              response.constraints.min = false;
-            }
-          }
-          if (_.isDate(options.max)) {
-            maxTime = options.max.getTime();
-            if (time > maxTime) {
-              response.valid = false;
-              response.constraints.max = false;
-            }
-          }
-          return response;
+          };
         },
         element: function() {
           return function(value) {
@@ -441,7 +444,7 @@
         var collectionResponse, errors, isCollection, responses, valid;
         collectionResponse = {
           valid: false,
-          errors: {},
+          errors: [],
           expected: ['Array', 'Object'],
           detected: detectPrimitive(value)
         };
