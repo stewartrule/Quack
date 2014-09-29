@@ -3,7 +3,7 @@
   var Lib;
 
   Lib = (function() {
-    var api, clone, detectPrimitive, dot, get, getArrayValidator, has, hasDot, hasObject, hasPath, primitives, set, test, validate, validators;
+    var api, clone, detectPrimitive, dot, get, getCollectionValidator, has, hasDot, hasObject, hasPath, primitives, set, test, validate, validators;
     primitives = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object'];
     detectPrimitive = function(value) {
       return _.find(primitives, function(type) {
@@ -223,7 +223,7 @@
         api: function(methods) {
           return function(value) {
             var response;
-            response = createResponse(value, 'Api');
+            response = createResponse(value, ['Object', 'Array']);
             if (!_.isObject(value)) {
               response.valid = false;
             }
@@ -240,8 +240,6 @@
                 fn = value[method];
                 return _.isFunction(fn) && fn.length === numArgs;
               });
-            } else {
-              response.constraints.methods = false;
             }
             return response;
           };
@@ -406,9 +404,19 @@
         pathExists: pathExists
       };
     };
-    getArrayValidator = function(method, validator) {
+    getCollectionValidator = function(method, validator) {
       return function(value) {
-        var errors, responses, valid;
+        var errors, isCollection, multiResponse, responses, valid;
+        multiResponse = {
+          valid: false,
+          errors: {},
+          expected: ['Array', 'Object'],
+          received: detectPrimitive(value)
+        };
+        isCollection = _.isArray(value) || _.isObject(value);
+        if (!isCollection) {
+          return multiResponse;
+        }
         responses = _.map(value, function(item) {
           return validator(item);
         });
@@ -418,12 +426,9 @@
         errors = _.filter(responses, function(response) {
           return !response.valid;
         });
-        return {
-          valid: valid,
-          errors: errors,
-          expected: 'Array',
-          received: detectPrimitive(value)
-        };
+        multiResponse.valid = valid;
+        multiResponse.errors = errors;
+        return multiResponse;
       };
     };
     api.hasPaths = function(parent, paths) {
@@ -432,10 +437,10 @@
       });
     };
     api.all = function(validator) {
-      return getArrayValidator('all', validator);
+      return getCollectionValidator('all', validator);
     };
     api.any = function(validator) {
-      return getArrayValidator('any', validator);
+      return getCollectionValidator('any', validator);
     };
     _.extend(api, validators);
     return api;

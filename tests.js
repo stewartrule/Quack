@@ -75,6 +75,11 @@
         debug: false,
         displayErrors: true,
 
+        dom: {
+            body: document.body,
+            fragment: document.createDocumentFragment()
+        },
+
         what: {
             nope: undefined,
             noWay: null,
@@ -82,12 +87,26 @@
         }
     };
 
+    function unquoteJsonKeys(json) {
+        json.replace(/\\"/g,"\uFFFF"); //U+ FFFF
+        return json.replace(/\"([^"]+)\":/g,"$1:").replace(/\uFFFF/g,"\\\"");
+    }
+
     function dump(obj) {
         var json = JSON.stringify(obj, null, '\t');
-        json.replace(/\\"/g,"\uFFFF"); //U+ FFFF
-        json = json.replace(/\"([^"]+)\":/g,"$1:").replace(/\uFFFF/g,"\\\"");
+        json = unquoteJsonKeys(json);
         console.log(json);
     }
+
+    var response = quack.validate(config, {
+        what: {
+            nope: quack.nil(),
+            noWay: quack.nil(),
+            notANumber: quack.nan()
+        }
+    });
+
+    dump(response);
 
     var response = quack.validate(config, 'resources', {
         'css': quack.object(),
@@ -104,16 +123,37 @@
         user: {
             // email: quack.regExp(/^\S+@\S+\_\S+$/)
             email: /^\S+@\S+\_\S+$/
+        },
+        dom: {
+            body: quack.element(),
+            fragment: quack.element()
         }
     });
 
     dump(response);
 
-    var response = quack.validate(config, 'media', {
+    var response = quack.validate(config, {
         align: quack.object(),
         'align.vertical.y': quack.number(),
         src: quack.string(),
-        ratios: quack.array()
+        ratios: quack.array(),
+        dom: quack.any(quack.element())
+    });
+
+    dump(response);
+
+    var response = quack.validate(config, {
+        'media.align': {
+            vertical: {
+                x: quack.string(),
+                y: quack.number()
+            }
+        },
+        colors: {
+            header: quack.regExp(/^#?([a-f0-9]{6}|[a-f0-9]{3})$/)
+        },
+        'api.book.getEan': quack.func(),
+        'api.book': quack.api(['getEan', 'getCosts', 'getTitleS'])
     });
 
     dump(response);

@@ -162,7 +162,7 @@ Lib = do ->
 
             api: (methods) ->
                 (value) ->
-                    response = createResponse(value, 'Api')
+                    response = createResponse(value, ['Object', 'Array'])
                     unless _.isObject(value)
                         response.valid = false
                     if _.isArray(methods)
@@ -174,8 +174,6 @@ Lib = do ->
                                 return false
                             fn = value[method]
                             _.isFunction(fn) and fn.length is numArgs
-                    else
-                        response.constraints.methods = false
                     response
         }
 
@@ -287,11 +285,11 @@ Lib = do ->
                     unless nestedErrors.valid
                         _.each nestedErrors.errors, (err, k) ->
                             errors[key + '.' + k] = err
-
                 else
                     throw new Error('unknown validator type')
 
         numErrors = _.keys(errors).length
+
         { valid: numErrors is 0, errors: errors, numErrors: numErrors }
 
     api.validate = (parent, path, map) ->
@@ -305,16 +303,34 @@ Lib = do ->
             return validate(nested, map)
         { valid: false, pathExists: pathExists }
 
-    # Returns a validator function to test the values of an array
-    getArrayValidator = (method, validator) ->
+    # Returns a validator function to test the values of an array or object
+    getCollectionValidator = (method, validator) ->
         (value) ->
+
+            multiResponse = {
+                valid: false,
+                errors: {},
+                expected: ['Array', 'Object'],
+                received: detectPrimitive(value)
+            }
+
+            isCollection = _.isArray(value) or _.isObject(value)
+
+            unless isCollection
+                return multiResponse
+
             responses = _.map value, (item) ->
                 validator(item)
+
             valid = _[method] responses, (response) ->
                 response.valid
+
             errors = _.filter responses, (response) ->
                 not response.valid
-            { valid: valid, errors: errors, expected: 'Array', received: detectPrimitive(value) }
+
+            multiResponse.valid = valid
+            multiResponse.errors = errors
+            multiResponse
 
     api.hasPaths = (parent, paths) ->
         _.all paths, (path) ->
@@ -322,11 +338,11 @@ Lib = do ->
 
     # Checks if all of the values in the list pass the predicate truth test
     api.all = (validator) ->
-        getArrayValidator('all', validator)
+        getCollectionValidator('all', validator)
 
     # Checks if any of the values in the list pass the predicate truth test
     api.any = (validator) ->
-        getArrayValidator('any', validator)
+        getCollectionValidator('any', validator)
 
     _.extend api, validators
 
