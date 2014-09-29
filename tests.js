@@ -98,6 +98,12 @@
             { start: new Date(2014, 3, 10, 12, 30), stop: new Date(2014, 3, 10, 13, 30) },
             { start: new Date(2014, 3, 11, 12, 30), stop: new Date(2014, 3, 11, 13, 30) },
             { start: new Date(2014, 3, 12, 12, 30), stop: new Date(2014, 3, 12, 13, 30) }
+        ],
+
+        events: [
+            { start: new Date(2014, 3, 10, 12, 30), name: 'Lunch', invited: ['Employee', 'Boss', 'Customer'] },
+            { start: new Date(2014, 3, 11, 12, 30), name: 'Party', invited: ['Boss', 'Customer'] },
+            { start: new Date(2014, 3, 12, 12, 30), name: 'BBQ', invited: ['Employee', 'Customer'] }
         ]
     };
 
@@ -113,6 +119,22 @@
         console.log(json);
     }
 
+
+    var response = quack.validate(config, {
+        events: quack.all(
+            quack.compare({
+                start: quack.date(),
+                name: quack.string(),
+                invited: quack.all(quack.pattern(/^[A-Za-z]$/))
+            })
+        )
+    });
+
+    dump(response);
+
+    // return;
+
+
     var response = quack.validate(config, {
         agenda: quack.all(
             quack.all(
@@ -125,8 +147,6 @@
     });
 
     dump(response);
-
-    return;
 
     var response = quack.validate(config, {
         coordinates: quack.all(quack.integer({ min: 20, max: 90 }))

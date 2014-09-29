@@ -380,6 +380,12 @@ Lib = do ->
     api.any = (validator) ->
         getCollectionValidator('any', validator)
 
+    api.compare = (map) ->
+        (value) ->
+            unless _.isObject(value)
+                throw new Error('value to compare should be an object')
+            validate(value, map)
+
     _.extend api, validators
 
     api

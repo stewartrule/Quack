@@ -473,6 +473,14 @@
     api.any = function(validator) {
       return getCollectionValidator('any', validator);
     };
+    api.compare = function(map) {
+      return function(value) {
+        if (!_.isObject(value)) {
+          throw new Error('value to compare should be an object');
+        }
+        return validate(value, map);
+      };
+    };
     _.extend(api, validators);
     return api;
   })();
