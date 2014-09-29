@@ -174,12 +174,12 @@ Lib = do ->
                         minTime = options.min.getTime()
                         if time < minTime
                             response.valid = false
-                            response.constraints.min = false
+                            response.constraints.min = options.min
                     if _.isDate(options.max)
                         maxTime = options.max.getTime()
                         if time > maxTime
                             response.valid = false
-                            response.constraints.max = false
+                            response.constraints.max = options.max
                     response
 
             element: () ->
@@ -195,20 +195,16 @@ Lib = do ->
                     unless _.isObject(value)
                         response.valid = false
                         return response
-
                     missing = []
-
                     if _.isArray(methods)
                         missing = _.reject methods, (method) ->
                             _.has(value, method) and _.isFunction(value[method])
-
                     else if _.isObject(methods)
                         missing = _.reject methods, (numArgs, method) ->
                             unless _.has(value, method)
                                 return false
                             fn = value[method]
                             _.isFunction(fn) and fn.length is numArgs
-
                     valid = missing.length is 0
                     response.valid = valid
                     unless valid

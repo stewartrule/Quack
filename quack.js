@@ -224,14 +224,14 @@
               minTime = options.min.getTime();
               if (time < minTime) {
                 response.valid = false;
-                response.constraints.min = false;
+                response.constraints.min = options.min;
               }
             }
             if (_.isDate(options.max)) {
               maxTime = options.max.getTime();
               if (time > maxTime) {
                 response.valid = false;
-                response.constraints.max = false;
+                response.constraints.max = options.max;
               }
             }
             return response;
