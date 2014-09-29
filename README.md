@@ -106,6 +106,7 @@ var response = quack.validate(config, {
     }
 });
 
+/*
 {
 	valid: false,
 	errors: {
@@ -120,6 +121,7 @@ var response = quack.validate(config, {
 	},
 	numErrors: 1
 }
+*/
 ```
 
 ```js
@@ -131,6 +133,7 @@ var response = quack.validate(config, 'resources', {
     }
 });
 
+/*
 {
 	valid: false,
 	errors: {
@@ -145,6 +148,7 @@ var response = quack.validate(config, 'resources', {
 	},
 	numErrors: 1
 }
+*/
 ```
 
 ```js
@@ -160,6 +164,7 @@ var response = quack.validate(config, {
     }
 });
 
+/*
 {
 	valid: false,
 	errors: {
@@ -190,6 +195,7 @@ var response = quack.validate(config, {
 	},
 	numErrors: 3
 }
+*/
 ```
 
 ```js
@@ -201,6 +207,7 @@ var response = quack.validate(config, {
     dom: quack.any(quack.element())
 });
 
+/*
 {
 	valid: false,
 	errors: {
@@ -239,4 +246,5 @@ var response = quack.validate(config, {
 	},
 	numErrors: 4
 }
+*/
 ```
