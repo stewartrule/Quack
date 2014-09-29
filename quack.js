@@ -222,17 +222,19 @@
         },
         api: function(methods) {
           return function(value) {
-            var response;
+            var missing, response, valid;
             response = createResponse(value, ['Object', 'Array']);
             if (!_.isObject(value)) {
               response.valid = false;
+              return response;
             }
+            missing = [];
             if (_.isArray(methods)) {
-              response.valid = _.all(methods, function(method) {
+              missing = _.reject(methods, function(method) {
                 return _.has(value, method) && _.isFunction(value[method]);
               });
             } else if (_.isObject(methods)) {
-              response.valid = _.all(methods, function(numArgs, method) {
+              missing = _.reject(methods, function(numArgs, method) {
                 var fn;
                 if (!_.has(value, method)) {
                   return false;
@@ -240,6 +242,11 @@
                 fn = value[method];
                 return _.isFunction(fn) && fn.length === numArgs;
               });
+            }
+            valid = missing.length === 0;
+            response.valid = valid;
+            if (!valid) {
+              response.missing = missing;
             }
             return response;
           };

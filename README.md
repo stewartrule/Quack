@@ -30,6 +30,15 @@ var config = {
                 'app.combined.min.css'
             ]
         },
+        js: {
+            base: '/static/js/',
+            files: [
+                'media-element.min.js',
+                'media-video.min.js',
+                'app.combined.min.js',
+                'media-audio.min.js'
+            ]
+        }
     },
     colors: {
         header: '#ff6600',
@@ -69,221 +78,165 @@ var config = {
     version: 1.2,
     environment: 'production',
     debug: false,
-    displayErrors: true
+    displayErrors: true,
+
+    dom: {
+        body: document.body,
+        fragment: document.createDocumentFragment()
+    },
+
+    what: {
+        nope: undefined,
+        noWay: null,
+        notANumber: 'a' * 9
+    }
 };
 ```
 
 
-### Checking multiple paths
-* validate(object, path, map)
+
+
 
 ```js
-var valid = quack.validate(config, 'media', {
-    align: quack.OBJECT,
-    'align.vertical.y': quack.NUMBER,
-    src: quack.STRING,
-    ratios: quack.ARRAY
-});
-// true
-```
-* validate(object, map)
-
-```js
-var valid = quack.validate(config, {
-    'media.align': {
-        vertical: {
-            x: quack.STRING,
-            y: quack.NUMBER
-        }
-    },
-    colors: {
-        header: quack.HEX
-    },
-    'api.book.getEan': quack.FUNCTION
-});
-// true
-```
-
-```js
-var valid = quack.validate(config, {
-    'user.name': /^[a-zA-Z]+$/,
-    'media.src': /^[a-z\/]+$/
-});
-// true
-```
-
-#### Test array and object values
-```js
-// security.ip.blocked should contain an array with only ips
-var valid = quack.validate(config, 'security.ip', {
-    blocked: quack.all(quack.validator.regexp.Ip)
+var response = quack.validate(config, {
+    what: {
+        nope: quack.nil(),
+        noWay: quack.nil(),
+        notANumber: quack.nan()
+    }
 });
 
-// companies should contain at least one entry with the string 'Philips'
-var valid = quack.validate(config, 'security', {
-    companies: quack.any(/^Philips$/)
-});
-
-// resources.css.files should contain only css filenames
-var valid = quack.validate(config, 'resources.css', {
-    files: quack.all(/^[a-z0-9\-\_\.\/]+.css$/)
-});
-
-// config.coordinates should only contains numbers
-var valid = quack.validate(config, {
-    coordinates: quack.all(_.isNumber)
-});
-
-// company only valid if it's present in the whitelist
-var valid = quack.validate(config, 'security', {
-    companies: quack.whitelist(['LG', 'Philips', 'Samsung'])
-});
-
-// company only valid if it's not in the blacklist
-var valid = quack.validate(config, 'security', {
-    companies: quack.blacklist(['xSamsung', 'xPhilips'])
-});
-
-// coordinates are only valid between 10 and 90 (inclusive)
-var valid = quack.validate(config, {
-    coordinates: quack.range(10, 90)
-});
-```
-
-
-#### Available constants
-* FUNCTION
-* OBJECT
-* ARRAY
-* NUMBER
-* STRING
-* BOOLEAN
-* DATE
-* REGEXP
-* ELEMENT
-* EMAIL
-* ZIPCODE
-* HEX
-* IP
-* SLUG
-
-
-### Checking a single path
-
-* isArray(object, path)
-* isBoolean(object, path)
-* isDate(object, path)
-* isElement(object, path)
-* isFunction(object, path)
-* isNumber(object, path)
-* isObject(object, path)
-* isRegExp(object, path)
-
-```js
-var res = quack.isNumber(config, 'resources.js.files');
-// false
-
-var res = quack.isArray(config, 'resources.js.files');
-// true
-```
-
-### Pattern checking
-
-* isEmail(object, path)
-* isHex(object, path)
-* isIp(object, path)
-* isSlug(object, path)
-* isString(object, path)
-* isZipcode(object, path)
-
-```js
-var valid = quack.isEmail(config, 'user.email');
-// true
-```
-
-### Custom regexp
-
-* test(object, path, regExp)
-
-```js
-var match = quack.test(
-    config,
-    'resources.css.files.1',
-    /^app([a-z0-9\._\-]+)css$/
-);
-// true
-```
-
-### Check for an interface or API
-
-* hasApi(object, path, methods)
-* hasApi(object, methods)
-
-```js
-var hasApi = quack.hasApi(
-    config,
-    'api.book',
-    ['getCosts', 'getTitle', 'getEan']
-);
-// true
-```
-
-or
-
-```js
-var hasApi = quack.hasApi(
-    config.api.book,
-    ['getCosts', 'getTitle', 'getEan']
-);
-// true
-```
-
-```js
-function orderableProduct(instance) {
-    return quack.hasApi(instance, ['order', 'getProductId']);
-}
-
-if (orderableProduct(something)) {
-    something.order();
+{
+	valid: false,
+	errors: {
+		what.nope: {
+			valid: false,
+			expected: "Null",
+			received: "Undefined",
+			constraints: {},
+			regExp: false,
+			pathExists: true
+		}
+	},
+	numErrors: 1
 }
 ```
 
-### Get nested property
-
-* get(object, path)
-
 ```js
-var name = quack.get(config, 'user.name');
+var response = quack.validate(config, 'resources', {
+    'css': quack.object(),
+    'css.files': quack.number(),
+    js: {
+        files: quack.any(quack.regExp(/combined/))
+    }
+});
+
+{
+	valid: false,
+	errors: {
+		css.files: {
+			valid: false,
+			expected: "Number",
+			received: "Array",
+			constraints: {},
+			regExp: false,
+			pathExists: true
+		}
+	},
+	numErrors: 1
+}
 ```
 
-* clone(object, path)
-
 ```js
-// same as get but creates a shallow clone of objects
-var book = quack.clone(config, 'api.book');
+var response = quack.validate(config, {
+    coordinates: quack.nil(),
+    user: {
+        // email: quack.regExp(/^\S+@\S+\_\S+$/)
+        email: /^\S+@\S+\_\S+$/
+    },
+    dom: {
+        body: quack.element(),
+        fragment: quack.element()
+    }
+});
+
+{
+	valid: false,
+	errors: {
+		coordinates: {
+			valid: false,
+			expected: "Null",
+			received: "Object",
+			constraints: {},
+			regExp: false,
+			pathExists: true
+		},
+		user.email: {
+			valid: false,
+			expected: "/^\\S+@\\S+\\_\\S+$/",
+			received: "foobar@baz.com",
+			constraints: {},
+			regExp: true,
+			pathExists: true
+		},
+		dom.fragment: {
+			valid: false,
+			expected: "Element",
+			received: "Object",
+			constraints: {},
+			regExp: false,
+			pathExists: true
+		}
+	},
+	numErrors: 3
+}
 ```
 
-### Manipulate
-
-* set(object, path, val)
 ```js
-quack.set(config, 'x.y.z', 'alphabet soup');
+var response = quack.validate(config, {
+    align: quack.object(),
+    'align.vertical.y': quack.number(),
+    src: quack.string(),
+    ratios: quack.array(),
+    dom: quack.any(quack.element())
+});
 
-var res = quack.get(config, 'x.y.z');
-// 'alphabet soup'
+{
+	valid: false,
+	errors: {
+		align: {
+			valid: false,
+			expected: "Object",
+			received: "Undefined",
+			constraints: {},
+			regExp: false,
+			pathExists: false
+		},
+		align.vertical.y: {
+			valid: false,
+			expected: "Number",
+			received: "Undefined",
+			constraints: {},
+			regExp: false,
+			pathExists: false
+		},
+		src: {
+			valid: false,
+			expected: "String",
+			received: "Undefined",
+			constraints: {},
+			regExp: false,
+			pathExists: false
+		},
+		ratios: {
+			valid: false,
+			expected: "Array",
+			received: "Undefined",
+			constraints: {},
+			regExp: false,
+			pathExists: false
+		}
+	},
+	numErrors: 4
+}
 ```
-
-
-### Validator
-
-for quick value checks you can also use the validator that quack uses internally
-
-```js
-var validator = quack.validator;
-
-validator.isEmail('foobar@baz.com');
-validator.isHex('#ff6600');
-validator.isZipcode('1211AB');
-```
-
-

@@ -165,15 +165,26 @@ Lib = do ->
                     response = createResponse(value, ['Object', 'Array'])
                     unless _.isObject(value)
                         response.valid = false
+                        return response
+
+                    missing = []
+
                     if _.isArray(methods)
-                        response.valid = _.all methods, (method) ->
+                        missing = _.reject methods, (method) ->
                             _.has(value, method) and _.isFunction(value[method])
+
                     else if _.isObject(methods)
-                        response.valid = _.all methods, (numArgs, method) ->
+                        missing = _.reject methods, (numArgs, method) ->
                             unless _.has(value, method)
                                 return false
                             fn = value[method]
                             _.isFunction(fn) and fn.length is numArgs
+
+                    valid = missing.length is 0
+                    response.valid = valid
+                    unless valid
+                        response.missing = missing
+
                     response
         }
 
