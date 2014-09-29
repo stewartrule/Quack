@@ -248,3 +248,33 @@ var response = quack.validate(config, {
 }
 */
 ```
+
+## Validation
+* validate
+
+### Tests
+* array
+* bool
+* date
+* element
+* func
+* integer
+* nan
+* nil
+* number
+* object
+* regExp
+* string
+* undef
+* api
+
+### Get / Set
+* get
+* set
+* clone
+
+### Collection value test
+* all
+* any
+
+
