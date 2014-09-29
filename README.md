@@ -124,12 +124,13 @@ var response = quack.validate(config, {
 */
 ```
 
+### Nested errors
 ```js
 var response = quack.validate(config, 'resources', {
     'css': quack.object(),
     'css.files': quack.number(),
     js: {
-        files: quack.any(quack.regExp(/combined/))
+        files: quack.all(quack.regExp(/combined/))
     }
 });
 
@@ -144,9 +145,41 @@ var response = quack.validate(config, 'resources', {
 			constraints: {},
 			regExp: false,
 			pathExists: true
+		},
+		js.files: {
+			valid: false,
+			errors: [
+				{
+					valid: false,
+					expected: "/combined/",
+					received: "media-element.min.js",
+					constraints: {},
+					regExp: true
+				},
+				{
+					valid: false,
+					expected: "/combined/",
+					received: "media-video.min.js",
+					constraints: {},
+					regExp: true
+				},
+				{
+					valid: false,
+					expected: "/combined/",
+					received: "media-audio.min.js",
+					constraints: {},
+					regExp: true
+				}
+			],
+			expected: [
+				"Array",
+				"Object"
+			],
+			received: "Array",
+			pathExists: true
 		}
 	},
-	numErrors: 1
+	numErrors: 2
 }
 */
 ```
