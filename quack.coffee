@@ -107,18 +107,20 @@ Lib = do ->
                         response.constraints.length = false
                     response
 
-            string: () ->
-                response = createResponse(value, 'String')
-                unless _.isString(value)
-                    response.valid = false
-                    return response
-                if _.isNumber(options.min) and value.length < options.min
-                    response.valid = false
-                    response.constraints.min = false
-                if _.isNumber(options.max) and value.length < options.max
-                    response.valid = false
-                    response.constraints.max = false
-                response
+            string: (options) ->
+                options or= {}
+                (value) ->
+                    response = createResponse(value, 'String')
+                    unless _.isString(value)
+                        response.valid = false
+                        return response
+                    if _.isNumber(options.min) and value.length < options.min
+                        response.valid = false
+                        response.constraints.min = false
+                    if _.isNumber(options.max) and value.length < options.max
+                        response.valid = false
+                        response.constraints.max = false
+                    response
 
             regExp: (regExp) ->
                 (value) ->

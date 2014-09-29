@@ -89,7 +89,7 @@
         console.log(json);
     }
 
-    var errors = quack.validate(config, 'resources', {
+    var response = quack.validate(config, 'resources', {
         'css': quack.object(),
         'css.files': quack.number(),
         js: {
@@ -97,9 +97,9 @@
         }
     });
 
-    dump(errors);
+    dump(response);
 
-    var errors = quack.validate(config, {
+    var response = quack.validate(config, {
         coordinates: quack.nil(),
         user: {
             // email: quack.regExp(/^\S+@\S+\_\S+$/)
@@ -107,9 +107,15 @@
         }
     });
 
-    dump(errors);
+    dump(response);
 
+    var response = quack.validate(config, 'media', {
+        align: quack.object(),
+        'align.vertical.y': quack.number(),
+        src: quack.string(),
+        ratios: quack.array()
+    });
 
-
+    dump(response);
 
 }());

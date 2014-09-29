@@ -150,22 +150,25 @@
             return response;
           };
         },
-        string: function() {
-          var response;
-          response = createResponse(value, 'String');
-          if (!_.isString(value)) {
-            response.valid = false;
+        string: function(options) {
+          options || (options = {});
+          return function(value) {
+            var response;
+            response = createResponse(value, 'String');
+            if (!_.isString(value)) {
+              response.valid = false;
+              return response;
+            }
+            if (_.isNumber(options.min) && value.length < options.min) {
+              response.valid = false;
+              response.constraints.min = false;
+            }
+            if (_.isNumber(options.max) && value.length < options.max) {
+              response.valid = false;
+              response.constraints.max = false;
+            }
             return response;
-          }
-          if (_.isNumber(options.min) && value.length < options.min) {
-            response.valid = false;
-            response.constraints.min = false;
-          }
-          if (_.isNumber(options.max) && value.length < options.max) {
-            response.valid = false;
-            response.constraints.max = false;
-          }
-          return response;
+          };
         },
         regExp: function(regExp) {
           return function(value) {
