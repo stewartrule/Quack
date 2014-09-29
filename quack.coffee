@@ -13,7 +13,7 @@ Lib = do ->
     validators = do () ->
 
         createResponse = (value, expected) ->
-            response = {
+            {
                 valid: true,
                 value: value,
                 expected: expected,

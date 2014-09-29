@@ -15,8 +15,7 @@
     validators = (function() {
       var createResponse;
       createResponse = function(value, expected) {
-        var response;
-        return response = {
+        return {
           valid: true,
           value: value,
           expected: expected,

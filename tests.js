@@ -113,27 +113,30 @@
         return json.replace(/\"([^"]+)\":/g,"$1:").replace(/\uFFFF/g,"\\\"");
     }
 
+    function replaceElement(key, value) {
+        if (_.has(value, 'nodeType') && _.has(value, 'nodeName')) {
+            return '<' + value.nodeName + '>';
+        }
+        return value;
+    }
+
     function dump(obj) {
-        var json = JSON.stringify(obj, null, '\t');
+        var json = JSON.stringify(obj, replaceElement, '\t');
         json = unquoteJsonKeys(json);
         console.log(json);
     }
-
 
     var response = quack.validate(config, {
         events: quack.all(
             quack.compare({
                 start: quack.date(),
                 name: quack.string(),
-                invited: quack.all(quack.pattern(/^[A-Za-z]$/))
+                invited: quack.all(quack.pattern(/^[A-Za-z]+$/))
             })
         )
     });
 
-    dump(response);
-
-    // return;
-
+    //dump(response);
 
     var response = quack.validate(config, {
         agenda: quack.all(
@@ -146,13 +149,13 @@
         )
     });
 
-    dump(response);
+    //dump(response);
 
     var response = quack.validate(config, {
         coordinates: quack.all(quack.integer({ min: 20, max: 90 }))
     });
 
-    dump(response);
+    //dump(response);
 
     var response = quack.validate(config, {
         regexp: {
@@ -171,7 +174,7 @@
         }
     });
 
-    dump(response);
+    //dump(response);
 
 
     var response = quack.validate(config, {
@@ -182,7 +185,7 @@
         }
     });
 
-    dump(response);
+    // dump(response);
 
     var response = quack.validate(config, 'resources', {
         'css': quack.object(),
@@ -213,7 +216,8 @@
         'align.vertical.y': quack.number(),
         src: quack.string(),
         ratios: quack.array(),
-        dom: quack.any(quack.element())
+        'dom.body': quack.number(),
+        dom: quack.all(quack.element())
     });
 
     dump(response);
