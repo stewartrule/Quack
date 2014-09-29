@@ -93,7 +93,7 @@
         'css': quack.object(),
         'css.files': quack.number(),
         js: {
-            files: quack.all(quack.regExp(/combined/))
+            files: quack.any(quack.regExp(/combined/))
         }
     });
 

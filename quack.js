@@ -98,7 +98,7 @@
           return function(value) {
             var response;
             response = createResponse(value, 'Null');
-            if (!_.isNaN(value)) {
+            if (!_.isNull(value)) {
               response.valid = false;
             }
             return response;
@@ -170,15 +170,16 @@
         regExp: function(regExp) {
           return function(value) {
             var response;
-            response = createResponse(value, regExp.toString());
+            response = createResponse(value, 'String');
             response.regExp = true;
             response.received = value;
             if (!_.isString(value)) {
               response.valid = false;
+              response.received = detectPrimitive(value);
+              return response;
             }
-            if (!regExp.test(value)) {
-              response.valid = false;
-            }
+            response.expected = regExp.toString();
+            response.valid = regExp.test(value);
             return response;
           };
         },
@@ -385,7 +386,7 @@
       };
     };
     api.validate = function(parent, path, map) {
-      var nested, pathExists, primitive;
+      var nested, pathExists;
       if (_.isObject(path)) {
         return validate(parent, path);
       }
@@ -397,11 +398,9 @@
       if (nested) {
         return validate(nested, map);
       }
-      primitive = detectPrimitive(nested);
       return {
         valid: false,
-        pathExists: pathExists,
-        primitive: primitive
+        pathExists: pathExists
       };
     };
     getArrayValidator = function(method, validator) {
@@ -423,6 +422,11 @@
           received: detectPrimitive(value)
         };
       };
+    };
+    api.hasPaths = function(parent, paths) {
+      return _.all(paths, function(path) {
+        return hasPath(parent, path);
+      });
     };
     api.all = function(validator) {
       return getArrayValidator('all', validator);

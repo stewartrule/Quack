@@ -70,7 +70,7 @@ Lib = do ->
             nil: () ->
                 (value) ->
                     response = createResponse(value, 'Null')
-                    unless _.isNaN(value)
+                    unless _.isNull(value)
                         response.valid = false
                     response
 
@@ -122,13 +122,15 @@ Lib = do ->
 
             regExp: (regExp) ->
                 (value) ->
-                    response = createResponse(value, regExp.toString())
+                    response = createResponse(value, 'String')
                     response.regExp = true
                     response.received = value
                     unless _.isString(value)
                         response.valid = false
-                    unless regExp.test(value)
-                        response.valid = false
+                        response.received = detectPrimitive(value)
+                        return response
+                    response.expected = regExp.toString()
+                    response.valid = regExp.test(value)
                     response
 
             date: (options) ->
@@ -161,14 +163,10 @@ Lib = do ->
                     response = createResponse(value, 'Api')
                     unless _.isObject(value)
                         response.valid = false
-
                     if _.isArray(methods)
-
                         response.valid = _.all methods, (method) ->
                             _.has(value, method) and _.isFunction(value[method])
-
                     else if _.isObject(methods)
-
                         response.valid = _.all methods, (numArgs, method) ->
                             unless _.has(value, method)
                                 return false
@@ -176,10 +174,9 @@ Lib = do ->
                             _.isFunction(fn) and fn.length is numArgs
                     else
                         response.constraints.methods = false
-
                     response
-
         }
+
 
     # Check if object has a key and that key holds an object
     hasObject = (parent, key) ->
@@ -304,22 +301,22 @@ Lib = do ->
         nested = get(parent, path)
         if nested
             return validate(nested, map)
-        primitive = detectPrimitive(nested)
-        { valid: false, pathExists: pathExists, primitive: primitive }
+        { valid: false, pathExists: pathExists }
 
     # Returns a validator function to test the values of an array
     getArrayValidator = (method, validator) ->
         (value) ->
             responses = _.map value, (item) ->
                 validator(item)
-
             valid = _[method] responses, (response) ->
                 response.valid
-
             errors = _.filter responses, (response) ->
                 not response.valid
-
             { valid: valid, errors: errors, expected: 'Array', received: detectPrimitive(value) }
+
+    api.hasPaths = (parent, paths) ->
+        _.all paths, (path) ->
+            hasPath parent, path
 
     # Checks if all of the values in the list pass the predicate truth test
     api.all = (validator) ->
