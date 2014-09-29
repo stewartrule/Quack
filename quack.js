@@ -3,10 +3,10 @@
   var Lib;
 
   Lib = (function() {
-    var api, clone, detectPrimitive, dot, get, getCollectionValidator, has, hasDot, hasObject, hasPath, primitives, set, test, validate, validators;
-    primitives = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object'];
-    detectPrimitive = function(value) {
-      return _.find(primitives, function(type) {
+    var api, clone, dot, get, getCollectionValidator, getTypeOf, has, hasDot, hasObject, hasPath, primaryTypes, set, test, validate, validators;
+    primaryTypes = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object'];
+    getTypeOf = function(value) {
+      return _.find(primaryTypes, function(type) {
         var fn;
         fn = 'is' + type;
         return _[fn](value);
@@ -19,7 +19,7 @@
           valid: true,
           value: value,
           expected: expected,
-          detected: detectPrimitive(value),
+          detected: getTypeOf(value),
           constraints: {},
           regExp: false
         };
@@ -202,7 +202,7 @@
             response.detected = value;
             if (!_.isString(value)) {
               response.valid = false;
-              response.detected = detectPrimitive(value);
+              response.detected = getTypeOf(value);
               return response;
             }
             response.expected = regExp.toString();
@@ -445,7 +445,7 @@
           valid: false,
           errors: [],
           expected: ['Array', 'Object'],
-          detected: detectPrimitive(value)
+          detected: getTypeOf(value)
         };
         isCollection = _.isArray(value) || _.isObject(value);
         if (!isCollection) {

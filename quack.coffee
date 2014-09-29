@@ -1,12 +1,12 @@
-# Kwek kwek!
 
+# Kwek kwek!
 Lib = do ->
 
-    # List of primitives
-    primitives = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object']
+    # List of primary types
+    primaryTypes = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object']
 
-    detectPrimitive = (value) ->
-        _.find primitives, (type) ->
+    getTypeOf = (value) ->
+        _.find primaryTypes, (type) ->
             fn = 'is' + type
             _[fn](value)
 
@@ -17,7 +17,7 @@ Lib = do ->
                 valid: true,
                 value: value,
                 expected: expected,
-                detected: detectPrimitive(value),
+                detected: getTypeOf(value),
                 constraints: {},
                 regExp: false
             }
@@ -156,7 +156,7 @@ Lib = do ->
                     response.detected = value
                     unless _.isString(value)
                         response.valid = false
-                        response.detected = detectPrimitive(value)
+                        response.detected = getTypeOf(value)
                         return response
                     response.expected = regExp.toString()
                     response.valid = regExp.test(value)
@@ -350,7 +350,7 @@ Lib = do ->
                 valid: false,
                 errors: [],
                 expected: ['Array', 'Object'],
-                detected: detectPrimitive(value)
+                detected: getTypeOf(value)
             }
 
             isCollection = _.isArray(value) or _.isObject(value)
