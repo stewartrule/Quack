@@ -10,6 +10,12 @@ Lib = do ->
             fn = 'is' + type
             _[fn](value)
 
+    isSpecialObject = (value) ->
+        _.isFunction(value) || _.isArray(value) || _.isDate(value) || _.isRegExp(value) || _.isElement(value)
+
+    isPlainObject = (value) ->
+        _.isObject(value) and not isSpecialObject(value)
+
     validators = do () ->
 
         createResponse = (value, expected) ->
@@ -23,6 +29,16 @@ Lib = do ->
             }
 
         return {
+
+            plainObject: (options) ->
+                options or= {}
+                (value) ->
+                    response = createResponse(value, 'Plain Object')
+                    unless isPlainObject(value)
+                        response.valid = false
+                        return response
+                    return response
+
             object: (options) ->
                 options or= {}
                 (value) ->
@@ -297,8 +313,8 @@ Lib = do ->
 
     validate = (obj, map) ->
         errors = {}
-        unless _.isObject(map)
-            throw new Error('map for comparison should be an object')
+        unless isPlainObject(map)
+            throw new Error('map for comparison should be a plain object')
 
         _.each map, (validator, key) ->
             pathExists = hasPath(obj, key)
@@ -378,12 +394,20 @@ Lib = do ->
     api.any = (validator) ->
         getCollectionValidator('any', validator)
 
+
     # Delegate values of arrays to a new validation-map
     api.delegate = (map) ->
         (value) ->
-            unless _.isObject(value)
-                throw new Error('value to delegate to validate should be an object')
-            validate(value, map)
+            if isPlainObject(value)
+                return validate(value, map)
+
+            console.log(value)
+
+            return validators.plainObject()(value)
+
+            # unless _.isObject(value)
+            #     throw new Error('value to delegate to validate should be an object')
+            # validate(value, map)
 
     _.extend api, validators
 

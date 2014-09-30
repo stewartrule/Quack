@@ -3,7 +3,7 @@
   var Lib;
 
   Lib = (function() {
-    var api, clone, dot, get, getCollectionValidator, getTypeOf, has, hasDot, hasObject, hasPath, primaryTypes, set, test, validate, validators;
+    var api, clone, dot, get, getCollectionValidator, getTypeOf, has, hasDot, hasObject, hasPath, isPlainObject, isSpecialObject, primaryTypes, set, test, validate, validators;
     primaryTypes = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object'];
     getTypeOf = function(value) {
       return _.find(primaryTypes, function(type) {
@@ -11,6 +11,12 @@
         fn = 'is' + type;
         return _[fn](value);
       });
+    };
+    isSpecialObject = function(value) {
+      return _.isFunction(value) || _.isArray(value) || _.isDate(value) || _.isRegExp(value) || _.isElement(value);
+    };
+    isPlainObject = function(value) {
+      return _.isObject(value) && !isSpecialObject(value);
     };
     validators = (function() {
       var createResponse;
@@ -25,6 +31,18 @@
         };
       };
       return {
+        plainObject: function(options) {
+          options || (options = {});
+          return function(value) {
+            var response;
+            response = createResponse(value, 'Plain Object');
+            if (!isPlainObject(value)) {
+              response.valid = false;
+              return response;
+            }
+            return response;
+          };
+        },
         object: function(options) {
           options || (options = {});
           return function(value) {
@@ -383,8 +401,8 @@
     validate = function(obj, map) {
       var errors, numErrors;
       errors = {};
-      if (!_.isObject(map)) {
-        throw new Error('map for comparison should be an object');
+      if (!isPlainObject(map)) {
+        throw new Error('map for comparison should be a plain object');
       }
       _.each(map, function(validator, key) {
         var nested, nestedErrors, pathExists, response;
@@ -475,10 +493,11 @@
     };
     api.delegate = function(map) {
       return function(value) {
-        if (!_.isObject(value)) {
-          throw new Error('value to delegate to validate should be an object');
+        if (isPlainObject(value)) {
+          return validate(value, map);
         }
-        return validate(value, map);
+        console.log(value);
+        return validators.plainObject()(value);
       };
     };
     _.extend(api, validators);
