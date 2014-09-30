@@ -105,8 +105,9 @@ var response = quack.validate(config, {
         notANumber: quack.nan()
     }
 });
+```
 
-/*
+```json
 {
 	valid: false,
 	errors: {
