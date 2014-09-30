@@ -175,7 +175,7 @@ Lib = do ->
             pattern: (regExp) ->
                 (value) ->
                     response = createResponse(value, 'String')
-                     unless _.isString(value)
+                    unless _.isString(value)
                         response.valid = false
                         return response
                     valid = regExp.test(value)
@@ -355,7 +355,7 @@ Lib = do ->
 
     #
     api.validate = (parent, path, map) ->
-        if _.isObject(path)
+        if isPlainObject(path)
             return validate(parent, path)
         unless _.isString(path)
             throw new Error('path/key should be a string')
