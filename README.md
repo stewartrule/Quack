@@ -122,7 +122,6 @@ var response = quack.validate(config, {
 	},
 	numErrors: 1
 }
-*/
 ```
 
 ### Nested errors
