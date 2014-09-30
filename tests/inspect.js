@@ -20,6 +20,29 @@
         console.log(json);
     }
 
+
+
+
+    var response = quack.validate(config, {
+        listOfObjects: quack.all(
+            quack.delegate({
+                start: quack.date()
+            })
+        )
+    });
+
+    dump(response);
+
+    var response = quack.validate(config, {
+        'media.ratios': quack.all(
+            quack.delegate({
+                start: quack.date()
+            })
+        )
+    });
+
+    dump(response);
+
     var response = quack.validate(config, {
         events: quack.all(
             quack.delegate({

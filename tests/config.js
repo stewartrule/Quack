@@ -13,6 +13,12 @@ window.config = {
         src: '/base/media/image/',
         ratios: [1, 2, 3, 4, 5, 6]
     },
+    listOfObjects: [
+        { start: new Date() },
+        function(){},
+        /^foobar$/,
+        []
+    ],
     resources: {
         css: {
             base: '/static/css/',
