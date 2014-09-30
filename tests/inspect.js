@@ -15,13 +15,28 @@
     }
 
     function dump(obj) {
-        var json = JSON.stringify(obj, replaceElement, '\t');
+        // var json = JSON.stringify(obj, replaceElement, '\t');
+        var json = JSON.stringify(obj, replaceElement, ' ');
         json = unquoteJsonKeys(json);
         console.log(json);
     }
 
 
+    var response = quack.validate(window, {
+        users: quack.all(
+            quack.delegate({
+                name: quack.string(),
+                screen_name: quack.string(),
+                id: quack.integer(),
+                id_str: quack.string(),
+                connections: quack.all(quack.pattern(/ollow/))
+            })
+        )
+    });
 
+    dump(response);
+
+    return;
 
     var response = quack.validate(config, {
         listOfObjects: quack.all(
