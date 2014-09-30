@@ -30,7 +30,7 @@ Lib = do ->
                 expected: expected,
                 detected: getTypeOf(value),
                 constraints: {},
-                regExp: false
+                pattern: false
             }
 
         # Return validators
@@ -175,14 +175,13 @@ Lib = do ->
             pattern: (regExp) ->
                 (value) ->
                     response = createResponse(value, 'String')
-                    response.regExp = true
-                    response.detected = value
-                    unless _.isString(value)
+                     unless _.isString(value)
                         response.valid = false
-                        response.detected = getTypeOf(value)
                         return response
-                    response.expected = regExp.toString()
-                    response.valid = regExp.test(value)
+                    valid = regExp.test(value)
+                    response.pattern = regExp.toString()
+                    response.patternMatch = valid
+                    response.valid = valid
                     response
 
             date: (options) ->
@@ -316,8 +315,10 @@ Lib = do ->
             return _.clone(nested)
         nested
 
+    # Initialize Quack API
     api = { get, set, test, clone }
 
+    # Validate object with a validation map
     validate = (obj, map) ->
         errors = {}
         unless isPlainObject(map)
@@ -352,6 +353,7 @@ Lib = do ->
 
         { valid: numErrors is 0, errors: errors, numErrors: numErrors }
 
+    #
     api.validate = (parent, path, map) ->
         if _.isObject(path)
             return validate(parent, path)
@@ -374,9 +376,9 @@ Lib = do ->
                 detected: getTypeOf(value)
             }
 
-            isCollection = _.isArray(value) or _.isObject(value)
+            testable = _.isArray(value) or isPlainObject(value)
 
-            unless isCollection
+            unless testable
                 return collectionResponse
 
             responses = _.map value, (item) ->
@@ -400,7 +402,6 @@ Lib = do ->
     # Checks if any of the values in the list pass the predicate truth test
     api.any = (validator) ->
         getCollectionValidator('any', validator)
-
 
     # Delegate values of arrays to a new validation-map
     api.delegate = (map) ->

@@ -27,7 +27,7 @@
           expected: expected,
           detected: getTypeOf(value),
           constraints: {},
-          regExp: false
+          pattern: false
         };
       };
       return {
@@ -214,17 +214,16 @@
         },
         pattern: function(regExp) {
           return function(value) {
-            var response;
+            var response, valid;
             response = createResponse(value, 'String');
-            response.regExp = true;
-            response.detected = value;
             if (!_.isString(value)) {
               response.valid = false;
-              response.detected = getTypeOf(value);
               return response;
             }
-            response.expected = regExp.toString();
-            response.valid = regExp.test(value);
+            valid = regExp.test(value);
+            response.pattern = regExp.toString();
+            response.patternMatch = valid;
+            response.valid = valid;
             return response;
           };
         },
@@ -459,15 +458,15 @@
     };
     getCollectionValidator = function(method, validator) {
       return function(value) {
-        var collectionResponse, errors, isCollection, responses, valid;
+        var collectionResponse, errors, responses, testable, valid;
         collectionResponse = {
           valid: false,
           errors: [],
           expected: ['Array', 'Object'],
           detected: getTypeOf(value)
         };
-        isCollection = _.isArray(value) || _.isObject(value);
-        if (!isCollection) {
+        testable = _.isArray(value) || isPlainObject(value);
+        if (!testable) {
           return collectionResponse;
         }
         responses = _.map(value, function(item) {
