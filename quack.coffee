@@ -196,12 +196,12 @@ Lib = do ->
                         minTime = options.min.getTime()
                         if time < minTime
                             response.valid = false
-                            response.constraints.min = options.min.toLocaleString()
+                            response.constraints.min = options.min
                     if _.isDate(options.max)
                         maxTime = options.max.getTime()
                         if time > maxTime
                             response.valid = false
-                            response.constraints.max = options.max.toLocaleString()
+                            response.constraints.max = options.max
                     response
 
             element: () ->

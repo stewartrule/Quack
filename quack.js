@@ -440,7 +440,7 @@
     };
     api.validate = function(parent, path, map) {
       var nested, pathExists;
-      if (_.isObject(path)) {
+      if (isPlainObject(path)) {
         return validate(parent, path);
       }
       if (!_.isString(path)) {
