@@ -297,31 +297,33 @@ Lib = do ->
 
     validate = (obj, map) ->
         errors = {}
-        if _.isObject(map)
-            _.each map, (validator, key) ->
-                pathExists = hasPath(obj, key)
-                nested = get(obj, key)
+        unless _.isObject(map)
+            throw new Error('map for comparison should be an object')
 
-                if _.isFunction(validator)
-                    response = validator(nested)
-                    response.pathExists = pathExists
-                    unless response.valid
-                        errors[key] = response
+        _.each map, (validator, key) ->
+            pathExists = hasPath(obj, key)
+            nested = get(obj, key)
 
-                else if _.isRegExp(validator)
-                    validator = validators.pattern(validator)
-                    response = validator(nested)
-                    response.pathExists = pathExists
-                    unless response.valid
-                        errors[key] = response
+            if _.isFunction(validator)
+                response = validator(nested)
+                response.pathExists = pathExists
+                unless response.valid
+                    errors[key] = response
 
-                else if _.isObject(validator)
-                    nestedErrors = validate(nested, validator)
-                    unless nestedErrors.valid
-                        _.each nestedErrors.errors, (err, k) ->
-                            errors[key + '.' + k] = err
-                else
-                    throw new Error('unknown validator type')
+            else if _.isRegExp(validator)
+                validator = validators.pattern(validator)
+                response = validator(nested)
+                response.pathExists = pathExists
+                unless response.valid
+                    errors[key] = response
+
+            else if _.isObject(validator)
+                nestedErrors = validate(nested, validator)
+                unless nestedErrors.valid
+                    _.each nestedErrors.errors, (err, k) ->
+                        errors[key + '.' + k] = err
+            else
+                throw new Error('unknown validator type')
 
         numErrors = _.keys(errors).length
 
@@ -376,6 +378,7 @@ Lib = do ->
     api.any = (validator) ->
         getCollectionValidator('any', validator)
 
+    # Delegate values of arrays to a new validation-map
     api.delegate = (map) ->
         (value) ->
             unless _.isObject(value)

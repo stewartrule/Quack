@@ -383,36 +383,37 @@
     validate = function(obj, map) {
       var errors, numErrors;
       errors = {};
-      if (_.isObject(map)) {
-        _.each(map, function(validator, key) {
-          var nested, nestedErrors, pathExists, response;
-          pathExists = hasPath(obj, key);
-          nested = get(obj, key);
-          if (_.isFunction(validator)) {
-            response = validator(nested);
-            response.pathExists = pathExists;
-            if (!response.valid) {
-              return errors[key] = response;
-            }
-          } else if (_.isRegExp(validator)) {
-            validator = validators.pattern(validator);
-            response = validator(nested);
-            response.pathExists = pathExists;
-            if (!response.valid) {
-              return errors[key] = response;
-            }
-          } else if (_.isObject(validator)) {
-            nestedErrors = validate(nested, validator);
-            if (!nestedErrors.valid) {
-              return _.each(nestedErrors.errors, function(err, k) {
-                return errors[key + '.' + k] = err;
-              });
-            }
-          } else {
-            throw new Error('unknown validator type');
-          }
-        });
+      if (!_.isObject(map)) {
+        throw new Error('map for comparison should be an object');
       }
+      _.each(map, function(validator, key) {
+        var nested, nestedErrors, pathExists, response;
+        pathExists = hasPath(obj, key);
+        nested = get(obj, key);
+        if (_.isFunction(validator)) {
+          response = validator(nested);
+          response.pathExists = pathExists;
+          if (!response.valid) {
+            return errors[key] = response;
+          }
+        } else if (_.isRegExp(validator)) {
+          validator = validators.pattern(validator);
+          response = validator(nested);
+          response.pathExists = pathExists;
+          if (!response.valid) {
+            return errors[key] = response;
+          }
+        } else if (_.isObject(validator)) {
+          nestedErrors = validate(nested, validator);
+          if (!nestedErrors.valid) {
+            return _.each(nestedErrors.errors, function(err, k) {
+              return errors[key + '.' + k] = err;
+            });
+          }
+        } else {
+          throw new Error('unknown validator type');
+        }
+      });
       numErrors = _.keys(errors).length;
       return {
         valid: numErrors === 0,
