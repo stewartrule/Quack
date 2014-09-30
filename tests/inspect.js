@@ -14,7 +14,7 @@
         return value;
     }
 
-    function dump(obj) {
+    function inspect(obj) {
         var json = JSON.stringify(obj, replaceElement, ' ');
         json = unquoteJsonKeys(json);
         console.log(json);
@@ -32,7 +32,7 @@
         )
     });
 
-    // dump(response);
+    inspect(response);
 
 
     var response = quack.validate(config, {
@@ -43,7 +43,7 @@
         )
     });
 
-    // dump(response);
+    // inspect(response);
 
     var response = quack.validate(config, {
         'media.ratios': quack.all(
@@ -53,7 +53,7 @@
         )
     });
 
-    // dump(response);
+    // inspect(response);
 
     var response = quack.validate(config, {
         events: quack.all(
@@ -65,7 +65,7 @@
         )
     });
 
-    // dump(response);
+    // inspect(response);
 
     var response = quack.validate(config, {
         agenda: quack.all(
@@ -78,13 +78,13 @@
         )
     });
 
-    dump(response);
+    inspect(response);
 
     var response = quack.validate(config, {
         coordinates: quack.all(quack.integer({ min: 20, max: 90 }))
     });
 
-    //dump(response);
+    //inspect(response);
 
     var response = quack.validate(config, {
         regexp: {
@@ -103,13 +103,13 @@
         }
     });
 
-    //dump(response);
+    //inspect(response);
 
     var response = quack.validate(config, {
         'coordinates.x': quack.all(quack.pattern(/combined/))
     });
 
-    // dump(response);
+    // inspect(response);
 
 
     var response = quack.validate(config, {
@@ -120,7 +120,7 @@
         }
     });
 
-    // dump(response);
+    // inspect(response);
 
     var response = quack.validate(config, 'resources', {
         'css': quack.object(),
@@ -130,7 +130,7 @@
         }
     });
 
-    // dump(response);
+    // inspect(response);
 
     var response = quack.validate(config, {
         coordinates: quack.nil(),
@@ -143,7 +143,7 @@
         }
     });
 
-    dump(response);
+    inspect(response);
 
     var response = quack.validate(config, {
         align: quack.object(),
@@ -154,7 +154,7 @@
         dom: quack.all(quack.element())
     });
 
-    // dump(response);
+    // inspect(response);
 
     var response = quack.validate(config, {
         'media.align': {
@@ -170,6 +170,6 @@
         'api.book': quack.api(['getEan', 'getCosts', 'getTitleS'])
     });
 
-    // dump(response);
+    // inspect(response);
 
 }());

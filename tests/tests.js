@@ -15,7 +15,6 @@
             )
         });
 
-        console.log(response);
 
         it('the response should be invalid', function () {
             expect(response.valid).toBe(false);
