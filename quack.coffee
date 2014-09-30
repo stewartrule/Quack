@@ -376,10 +376,10 @@ Lib = do ->
     api.any = (validator) ->
         getCollectionValidator('any', validator)
 
-    api.compare = (map) ->
+    api.delegate = (map) ->
         (value) ->
             unless _.isObject(value)
-                throw new Error('value to compare should be an object')
+                throw new Error('value to delegate to validate should be an object')
             validate(value, map)
 
     _.extend api, validators
