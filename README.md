@@ -110,7 +110,7 @@ var response = quack.validate(config, {
 ```json
 {
 	"valid": false,
-	"errors: {
+	"errors": {
 		"what.nope": {
 			"valid": false,
 			"expected": "Null",
