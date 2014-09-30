@@ -111,7 +111,7 @@ var response = quack.validate(config, {
 {
 	valid: false,
 	errors: {
-		what.nope: {
+		"what.nope": {
 			valid: false,
 			expected: "Null",
 			received: "Undefined",
