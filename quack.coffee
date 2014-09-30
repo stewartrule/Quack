@@ -5,19 +5,24 @@ Lib = do ->
     # List of primary types
     primaryTypes = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object']
 
+    # Detect the type of a value
     getTypeOf = (value) ->
         _.find primaryTypes, (type) ->
             fn = 'is' + type
             _[fn](value)
 
+    # Check if object inherits from object
     isSpecialObject = (value) ->
         _.isFunction(value) || _.isArray(value) || _.isDate(value) || _.isRegExp(value) || _.isElement(value)
 
+    # Check if object is a regular object
     isPlainObject = (value) ->
         _.isObject(value) and not isSpecialObject(value)
 
+    # List of validators
     validators = do () ->
 
+        # Create a base response object
         createResponse = (value, expected) ->
             {
                 valid: true,
@@ -37,6 +42,11 @@ Lib = do ->
                     unless isPlainObject(value)
                         response.valid = false
                         return response
+
+                    if _.isNumber(options.length)
+                        unless _.keys(value).length is options.length
+                            response.valid = false
+                            response.constraints.length = false
                     return response
 
             object: (options) ->
@@ -46,10 +56,6 @@ Lib = do ->
                     unless _.isObject(value)
                         response.valid = false
                         return response
-                    if _.isNumber(options.length)
-                        unless _.keys(value).length is options.length
-                            response.valid = false
-                            response.constraints.length = false
                     response
 
             number: (options) ->
@@ -400,18 +406,14 @@ Lib = do ->
         (value) ->
             if isPlainObject(value)
                 return validate(value, map)
-
-            console.log(value)
-
             return validators.plainObject()(value)
 
-            # unless _.isObject(value)
-            #     throw new Error('value to delegate to validate should be an object')
-            # validate(value, map)
-
+    # Merge validator with quack api
     _.extend api, validators
 
+    # Return API
     api
+
 
 # Export quack
 if typeof define is 'function' and define.amd

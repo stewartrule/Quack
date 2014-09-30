@@ -40,6 +40,12 @@
               response.valid = false;
               return response;
             }
+            if (_.isNumber(options.length)) {
+              if (_.keys(value).length !== options.length) {
+                response.valid = false;
+                response.constraints.length = false;
+              }
+            }
             return response;
           };
         },
@@ -51,12 +57,6 @@
             if (!_.isObject(value)) {
               response.valid = false;
               return response;
-            }
-            if (_.isNumber(options.length)) {
-              if (_.keys(value).length !== options.length) {
-                response.valid = false;
-                response.constraints.length = false;
-              }
             }
             return response;
           };
@@ -496,7 +496,6 @@
         if (isPlainObject(value)) {
           return validate(value, map);
         }
-        console.log(value);
         return validators.plainObject()(value);
       };
     };
