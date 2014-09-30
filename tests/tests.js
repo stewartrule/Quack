@@ -2,7 +2,6 @@
 
     'use strict';
 
-
     describe('For every object in the agenda array, all properties of the object should contain a date between a min and max date', function () {
 
         var response = quack.validate(config, {

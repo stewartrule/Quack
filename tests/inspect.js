@@ -74,7 +74,6 @@
         'coordinates.x': quack.all(quack.pattern(/combined/))
     });
 
-    console.log('fu!')
     dump(response);
 
 
