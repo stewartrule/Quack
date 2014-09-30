@@ -3,7 +3,7 @@
   var Lib;
 
   Lib = (function() {
-    var api, clone, dot, get, getCollectionValidator, getTypeOf, has, hasDot, hasObject, hasPath, isPlainObject, isSpecialObject, primaryTypes, set, test, validate, validators;
+    var api, clone, dot, get, getCollectionValidator, getTypeOf, has, hasDot, hasObject, hasPath, isObjectSubType, isPlainObject, primaryTypes, set, test, validate, validators;
     primaryTypes = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object'];
     getTypeOf = function(value) {
       return _.find(primaryTypes, function(type) {
@@ -12,11 +12,11 @@
         return _[fn](value);
       });
     };
-    isSpecialObject = function(value) {
+    isObjectSubType = function(value) {
       return _.isFunction(value) || _.isArray(value) || _.isDate(value) || _.isRegExp(value) || _.isElement(value);
     };
     isPlainObject = function(value) {
-      return _.isObject(value) && !isSpecialObject(value);
+      return _.isObject(value) && !isObjectSubType(value);
     };
     validators = (function() {
       var createResponse;

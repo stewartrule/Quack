@@ -11,13 +11,13 @@ Lib = do ->
             fn = 'is' + type
             _[fn](value)
 
-    # Check if object inherits from object
-    isSpecialObject = (value) ->
+    # Check if value is a subtype of Object
+    isObjectSubType = (value) ->
         _.isFunction(value) || _.isArray(value) || _.isDate(value) || _.isRegExp(value) || _.isElement(value)
 
     # Check if object is a regular object
     isPlainObject = (value) ->
-        _.isObject(value) and not isSpecialObject(value)
+        _.isObject(value) and not isObjectSubType(value)
 
     # List of validators
     validators = do () ->
@@ -33,6 +33,7 @@ Lib = do ->
                 regExp: false
             }
 
+        # Return validators
         return {
 
             plainObject: (options) ->
