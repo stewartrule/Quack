@@ -15,12 +15,10 @@
     }
 
     function dump(obj) {
-        // var json = JSON.stringify(obj, replaceElement, '\t');
         var json = JSON.stringify(obj, replaceElement, ' ');
         json = unquoteJsonKeys(json);
         console.log(json);
     }
-
 
     var response = quack.validate(window, {
         users: quack.all(
@@ -34,9 +32,8 @@
         )
     });
 
-    dump(response);
+    // dump(response);
 
-    return;
 
     var response = quack.validate(config, {
         listOfObjects: quack.all(
@@ -46,7 +43,7 @@
         )
     });
 
-    dump(response);
+    // dump(response);
 
     var response = quack.validate(config, {
         'media.ratios': quack.all(
@@ -56,7 +53,7 @@
         )
     });
 
-    dump(response);
+    // dump(response);
 
     var response = quack.validate(config, {
         events: quack.all(
@@ -68,7 +65,7 @@
         )
     });
 
-    dump(response);
+    // dump(response);
 
     var response = quack.validate(config, {
         agenda: quack.all(
@@ -81,7 +78,7 @@
         )
     });
 
-    //dump(response);
+    dump(response);
 
     var response = quack.validate(config, {
         coordinates: quack.all(quack.integer({ min: 20, max: 90 }))
@@ -112,7 +109,7 @@
         'coordinates.x': quack.all(quack.pattern(/combined/))
     });
 
-    dump(response);
+    // dump(response);
 
 
     var response = quack.validate(config, {
@@ -133,13 +130,12 @@
         }
     });
 
-    dump(response);
+    // dump(response);
 
     var response = quack.validate(config, {
         coordinates: quack.nil(),
         user: {
-            // email: quack.pattern(/^\S+@\S+\_\S+$/)
-            email: /^\S+@\S+\_\S+$/
+            email: quack.pattern(/^\S+@\S+\_\S+$/)
         },
         dom: {
             body: quack.element(),
@@ -158,7 +154,7 @@
         dom: quack.all(quack.element())
     });
 
-    dump(response);
+    // dump(response);
 
     var response = quack.validate(config, {
         'media.align': {
@@ -174,6 +170,6 @@
         'api.book': quack.api(['getEan', 'getCosts', 'getTitleS'])
     });
 
-    dump(response);
+    // dump(response);
 
 }());
