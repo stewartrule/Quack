@@ -109,18 +109,18 @@ var response = quack.validate(config, {
 
 ```json
 {
-	valid: false,
-	errors: {
+	"valid": false,
+	"errors: {
 		"what.nope": {
-			valid: false,
-			expected: "Null",
-			received: "Undefined",
-			constraints: {},
-			regExp: false,
-			pathExists: true
+			"valid": false,
+			"expected": "Null",
+			"received": "Undefined",
+			"constraints": {},
+			"regExp": false,
+			"pathExists": true
 		}
 	},
-	numErrors: 1
+	"numErrors": 1
 }
 ```
 
