@@ -20,6 +20,23 @@
         console.log(json);
     }
 
+    var response = quack.validate(window, {
+        Element: {
+            ALLOW_KEYBOARD_INPUT: quack.string(),
+            prototype: {
+                animate: quack.func(),
+                hasAttribute: quack.nil(),
+                '__proto__.ATTRIBUTE_NODE': quack.integer()
+            },
+
+        }
+    });
+
+    inspect(response);
+
+    return;
+
+
     var response = quack.validate(config, {
         agenda: quack.all(
             quack.all(
@@ -33,7 +50,6 @@
 
     inspect(response);
 
-    return;
 
     var response = quack.validate(window, {
         users: quack.all({
