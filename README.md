@@ -5,11 +5,11 @@ Quack helps you to validate object structures and values.
 It has a dependency on [underscore.js](http://underscorejs.org/) and is still under development.
 
 
-#### Consider this dummy object
+#### Example
 ```js
 var agenda = {
   companies: [{
-    name: 'Angry Bytes',
+    name: 'Philips',
     events: [{
       start: new Date(2011, 3, 10, 12, 30), // error
       name: 'Lunch',
@@ -24,7 +24,7 @@ var agenda = {
       invited: ['Employee', 'Customer']
     }]
   }, {
-    name: 'Two Screen',
+    name: 'Samsung',
     events: [{
       start: new Date(2014, 3, 10, 12, 30),
       name: 'Birthday', // error
