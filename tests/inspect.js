@@ -20,53 +20,6 @@
         console.log(json);
     }
 
-    var response = quack.validate(window, {
-        users: quack.all(
-            quack.delegate({
-                name: quack.string(),
-                screen_name: quack.string(),
-                id: quack.integer(),
-                id_str: quack.string(),
-                connections: quack.all(quack.pattern(/ollow/))
-            })
-        )
-    });
-
-    inspect(response);
-
-
-    var response = quack.validate(config, {
-        listOfObjects: quack.all(
-            quack.delegate({
-                start: quack.date()
-            })
-        )
-    });
-
-    // inspect(response);
-
-    var response = quack.validate(config, {
-        'media.ratios': quack.all(
-            quack.delegate({
-                start: quack.date()
-            })
-        )
-    });
-
-    // inspect(response);
-
-    var response = quack.validate(config, {
-        events: quack.all(
-            quack.delegate({
-                start: quack.date(),
-                name: quack.string(),
-                invited: quack.all(quack.pattern(/^[A-Za-z]+$/))
-            })
-        )
-    });
-
-    // inspect(response);
-
     var response = quack.validate(config, {
         agenda: quack.all(
             quack.all(
@@ -79,6 +32,49 @@
     });
 
     inspect(response);
+
+    return;
+
+    var response = quack.validate(window, {
+        users: quack.all({
+            name: quack.string(),
+            screen_name: quack.string(),
+            id: quack.integer(),
+            id_str: quack.string(),
+            connections: quack.all(quack.pattern(/ollow/))
+        })
+    });
+
+    // inspect(response);
+
+
+    var response = quack.validate(config, {
+        listOfObjects: quack.all({
+            start: quack.date()
+        })
+    });
+
+    // inspect(response);
+
+    var response = quack.validate(config, {
+        'media.ratios': quack.all({
+            start: quack.date()
+        })
+    });
+
+    // inspect(response);
+
+    var response = quack.validate(config, {
+        events: quack.all({
+            start: quack.date(),
+            name: quack.string(),
+            invited: quack.all(quack.pattern(/^[A-Za-z]+$/))
+        })
+    });
+
+    // inspect(response);
+
+
 
     var response = quack.validate(config, {
         coordinates: quack.all(quack.integer({ min: 20, max: 90 }))

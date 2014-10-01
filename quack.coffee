@@ -321,6 +321,7 @@ Lib = do ->
     # Validate object with a validation map
     validate = (obj, map) ->
         errors = {}
+
         unless isPlainObject(map)
             throw new Error('map for comparison should be a plain object')
 
@@ -353,7 +354,6 @@ Lib = do ->
 
         { valid: numErrors is 0, errors: errors, numErrors: numErrors }
 
-    #
     api.validate = (parent, path, map) ->
         if isPlainObject(path)
             return validate(parent, path)
@@ -365,35 +365,52 @@ Lib = do ->
             return validate(nested, map)
         { valid: false, pathExists: pathExists }
 
+
+    # Delegate values of arrays to a new validation-map
+    delegate = (map) ->
+        (value) ->
+            if isPlainObject(value)
+                return validate(value, map)
+            return validators.plainObject()(value)
+
     # Returns a validator function to test the values of an array or object
     getCollectionValidator = (method, validator) ->
+
+        # if validator is a plain object it should be passed to validate for every item in the array
+        if isPlainObject(validator)
+            validator = delegate(validator)
+
+        # Return collection validator
         (value) ->
 
+            # Create default response
             collectionResponse = {
                 valid: false,
-                errors: [],
+                errors: {},
                 expected: ['Array', 'Object'],
                 detected: getTypeOf(value)
             }
 
+            # Allow arrays and plain objects
             testable = _.isArray(value) or isPlainObject(value)
 
             unless testable
                 return collectionResponse
 
-            responses = _.map value, (item) ->
-                validator(item)
+            # Detect errors
+            errors = {}
+            _.each value, (item, key) ->
+                response = validator(item)
+                unless response.valid
+                    errors[key] = response
 
-            valid = _[method] responses, (response) ->
-                response.valid
-
-            errors = _.filter responses, (response) ->
-                not response.valid
-
-            collectionResponse.valid = valid
+            # Update the response
+            numErrors = _.keys(errors).length
+            collectionResponse.valid = numErrors is 0
             collectionResponse.errors = errors
-            collectionResponse.numErrors = _.keys(errors).length
+            collectionResponse.numErrors = numErrors
             collectionResponse
+
 
     # Checks if all of the values in the list pass the predicate truth test
     api.all = (validator) ->
@@ -403,12 +420,6 @@ Lib = do ->
     api.any = (validator) ->
         getCollectionValidator('any', validator)
 
-    # Delegate values of arrays to a new validation-map
-    api.delegate = (map) ->
-        (value) ->
-            if isPlainObject(value)
-                return validate(value, map)
-            return validators.plainObject()(value)
 
     # Merge validator with quack api
     _.extend api, validators

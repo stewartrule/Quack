@@ -97,7 +97,8 @@ window.config = {
     },
 
     agenda: [
-        { start: new Date(2014, 3, 10, 12, 30), stop: new Date(2014, 3, 10, 13, 30) },
+        { start: new Date(2014, 3, 10, 12, 30), stop: new Date(2016, 3, 10, 13, 30) },
+
         { start: new Date(2014, 3, 10, 12, 30), stop: new Date(2014, 3, 10, 13, 30) },
         { start: new Date(2014, 3, 10, 12, 30), stop: new Date(2014, 3, 10, 13, 30) },
         { start: new Date(2014, 3, 10, 12, 30), stop: new Date(2014, 3, 10, 13, 30) },

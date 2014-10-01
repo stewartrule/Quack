@@ -3,7 +3,7 @@
   var Lib;
 
   Lib = (function() {
-    var api, clone, dot, get, getCollectionValidator, getTypeOf, has, hasDot, hasObject, hasPath, isObjectSubType, isPlainObject, primaryTypes, set, test, validate, validators;
+    var api, clone, delegate, dot, get, getCollectionValidator, getTypeOf, has, hasDot, hasObject, hasPath, isObjectSubType, isPlainObject, primaryTypes, set, test, validate, validators;
     primaryTypes = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object'];
     getTypeOf = function(value) {
       return _.find(primaryTypes, function(type) {
@@ -456,12 +456,23 @@
         pathExists: pathExists
       };
     };
-    getCollectionValidator = function(method, validator) {
+    delegate = function(map) {
       return function(value) {
-        var collectionResponse, errors, responses, testable, valid;
+        if (isPlainObject(value)) {
+          return validate(value, map);
+        }
+        return validators.plainObject()(value);
+      };
+    };
+    getCollectionValidator = function(method, validator) {
+      if (isPlainObject(validator)) {
+        validator = delegate(validator);
+      }
+      return function(value) {
+        var collectionResponse, errors, numErrors, testable;
         collectionResponse = {
           valid: false,
-          errors: [],
+          errors: {},
           expected: ['Array', 'Object'],
           detected: getTypeOf(value)
         };
@@ -469,18 +480,18 @@
         if (!testable) {
           return collectionResponse;
         }
-        responses = _.map(value, function(item) {
-          return validator(item);
+        errors = {};
+        _.each(value, function(item, key) {
+          var response;
+          response = validator(item);
+          if (!response.valid) {
+            return errors[key] = response;
+          }
         });
-        valid = _[method](responses, function(response) {
-          return response.valid;
-        });
-        errors = _.filter(responses, function(response) {
-          return !response.valid;
-        });
-        collectionResponse.valid = valid;
+        numErrors = _.keys(errors).length;
+        collectionResponse.valid = numErrors === 0;
         collectionResponse.errors = errors;
-        collectionResponse.numErrors = _.keys(errors).length;
+        collectionResponse.numErrors = numErrors;
         return collectionResponse;
       };
     };
@@ -489,14 +500,6 @@
     };
     api.any = function(validator) {
       return getCollectionValidator('any', validator);
-    };
-    api.delegate = function(map) {
-      return function(value) {
-        if (isPlainObject(value)) {
-          return validate(value, map);
-        }
-        return validators.plainObject()(value);
-      };
     };
     _.extend(api, validators);
     return api;
