@@ -1,6 +1,6 @@
 {
   "name": "quack",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "quack.js",
   "dependencies": {
     "underscore": "~1.7.0"
