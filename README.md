@@ -11,7 +11,7 @@ var agenda = {
   companies: [{
     name: 'Philips',
     events: [{
-      start: new Date(2011, 3, 10, 12, 30), // error
+      start: new Date(2011, 3, 10, 12, 30), // won't match
       name: 'Lunch',
       invited: ['Employee', 'Boss', 'Customer']
     }, {
@@ -27,7 +27,7 @@ var agenda = {
     name: 'Samsung',
     events: [{
       start: new Date(2014, 3, 10, 12, 30),
-      name: 'Birthday', // error
+      name: 'Birthday', // won't match
       invited: ['Employee', 'Boss', 'Customer']
     }, {
       start: new Date(2014, 3, 11, 12, 30),
@@ -36,7 +36,7 @@ var agenda = {
     }, {
       start: new Date(2014, 3, 12, 12, 30),
       name: 'BBQ',
-      invited: ['Employee', 'Customer with a vengeance!'] // error
+      invited: ['Employee', 'Customer with a vengeance!'] // won't match
     }]
   }]
 };

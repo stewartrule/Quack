@@ -134,7 +134,6 @@ Lib = do ->
                                     expected: options[param]
                                 }
 
-                    response.value = value
                     response.valid = _.keys(response.difference).length is 0
                     response
 

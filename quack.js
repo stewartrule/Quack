@@ -161,7 +161,6 @@
                 }
               }
             });
-            response.value = value;
             response.valid = _.keys(response.difference).length === 0;
             return response;
           };
