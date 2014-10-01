@@ -18,13 +18,13 @@
         <h1>Quack</h1>
         <p>validate object paths and values</p>
 
-        <p class="view"><a href="https://github.com/stewartrule/quack">View the Project on GitHub <small>stewartrule/quack</small></a></p>
+        <p class="view"><a href="https://github.com/stewartrule/Quack">View the Project on GitHub <small>stewartrule/Quack</small></a></p>
 
 
         <ul>
-          <li><a href="https://github.com/stewartrule/quack/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/stewartrule/quack/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/stewartrule/quack">View On <strong>GitHub</strong></a></li>
+          <li><a href="https://github.com/stewartrule/Quack/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/stewartrule/Quack/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/stewartrule/Quack">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
       <section>
@@ -42,7 +42,7 @@
   <span class="nx">companies</span><span class="o">:</span> <span class="p">[{</span>
     <span class="nx">name</span><span class="o">:</span> <span class="s1">'Philips'</span><span class="p">,</span>
     <span class="nx">events</span><span class="o">:</span> <span class="p">[{</span>
-      <span class="nx">start</span><span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="mi">2011</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="c1">// error</span>
+      <span class="nx">start</span><span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="mi">2011</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span> <span class="c1">// won't match</span>
       <span class="nx">name</span><span class="o">:</span> <span class="s1">'Lunch'</span><span class="p">,</span>
       <span class="nx">invited</span><span class="o">:</span> <span class="p">[</span><span class="s1">'Employee'</span><span class="p">,</span> <span class="s1">'Boss'</span><span class="p">,</span> <span class="s1">'Customer'</span><span class="p">]</span>
     <span class="p">},</span> <span class="p">{</span>
@@ -58,7 +58,7 @@
     <span class="nx">name</span><span class="o">:</span> <span class="s1">'Samsung'</span><span class="p">,</span>
     <span class="nx">events</span><span class="o">:</span> <span class="p">[{</span>
       <span class="nx">start</span><span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
-      <span class="nx">name</span><span class="o">:</span> <span class="s1">'Birthday'</span><span class="p">,</span> <span class="c1">// error</span>
+      <span class="nx">name</span><span class="o">:</span> <span class="s1">'Birthday'</span><span class="p">,</span> <span class="c1">// won't match</span>
       <span class="nx">invited</span><span class="o">:</span> <span class="p">[</span><span class="s1">'Employee'</span><span class="p">,</span> <span class="s1">'Boss'</span><span class="p">,</span> <span class="s1">'Customer'</span><span class="p">]</span>
     <span class="p">},</span> <span class="p">{</span>
       <span class="nx">start</span><span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
@@ -67,7 +67,7 @@
     <span class="p">},</span> <span class="p">{</span>
       <span class="nx">start</span><span class="o">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
       <span class="nx">name</span><span class="o">:</span> <span class="s1">'BBQ'</span><span class="p">,</span>
-      <span class="nx">invited</span><span class="o">:</span> <span class="p">[</span><span class="s1">'Employee'</span><span class="p">,</span> <span class="s1">'Customer with a vengeance!'</span><span class="p">]</span> <span class="c1">// error</span>
+      <span class="nx">invited</span><span class="o">:</span> <span class="p">[</span><span class="s1">'Employee'</span><span class="p">,</span> <span class="s1">'Customer with a vengeance!'</span><span class="p">]</span> <span class="c1">// won't match</span>
     <span class="p">}]</span>
   <span class="p">}]</span>
 <span class="p">};</span>
