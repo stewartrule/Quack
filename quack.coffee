@@ -353,6 +353,7 @@ Lib = do ->
 
         { valid: numErrors is 0, errors: errors, numErrors: numErrors }
 
+    # Validate object
     api.validate = (parent, path, map) ->
         if isPlainObject(path)
             return validate(parent, path)
@@ -360,24 +361,26 @@ Lib = do ->
             throw new Error('path/key should be a string')
         pathExists = hasPath(parent, path)
         nested = get(parent, path)
-        if nested
+        if pathExists
             return validate(nested, map)
         { valid: false, pathExists: pathExists }
 
+    # Fallback plain object validator for delegated validators
+    plainObjectValidator = validators.plainObject()
 
     # Delegate values of arrays to a new validation-map
-    delegate = (map) ->
+    getValidatorDelegate = (map) ->
         (value) ->
             if isPlainObject(value)
                 return validate(value, map)
-            return validators.plainObject()(value)
+            return plainObjectValidator(value)
 
     # Returns a validator function to test the values of an array or object
     getCollectionValidator = (method, validator) ->
 
         # if validator is a plain object it should be passed to validate for every item in the array
         if isPlainObject(validator)
-            validator = delegate(validator)
+            validator = getValidatorDelegate(validator)
 
         # Return collection validator
         (value) ->

@@ -3,7 +3,7 @@
   var Lib;
 
   Lib = (function() {
-    var api, clone, delegate, dot, get, getCollectionValidator, getTypeOf, has, hasDot, hasObject, hasPath, isObjectSubType, isPlainObject, primaryTypes, set, test, validate, validators;
+    var api, clone, dot, get, getCollectionValidator, getTypeOf, getValidatorDelegate, has, hasDot, hasObject, hasPath, isObjectSubType, isPlainObject, plainObjectValidator, primaryTypes, set, test, validate, validators;
     primaryTypes = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object'];
     getTypeOf = function(value) {
       return _.find(primaryTypes, function(type) {
@@ -447,7 +447,7 @@
       }
       pathExists = hasPath(parent, path);
       nested = get(parent, path);
-      if (nested) {
+      if (pathExists) {
         return validate(nested, map);
       }
       return {
@@ -455,17 +455,18 @@
         pathExists: pathExists
       };
     };
-    delegate = function(map) {
+    plainObjectValidator = validators.plainObject();
+    getValidatorDelegate = function(map) {
       return function(value) {
         if (isPlainObject(value)) {
           return validate(value, map);
         }
-        return validators.plainObject()(value);
+        return plainObjectValidator(value);
       };
     };
     getCollectionValidator = function(method, validator) {
       if (isPlainObject(validator)) {
-        validator = delegate(validator);
+        validator = getValidatorDelegate(validator);
       }
       return function(value) {
         var collectionResponse, errors, numErrors, testable;
