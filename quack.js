@@ -37,13 +37,6 @@
             response = createResponse(value, 'Plain Object');
             if (!isPlainObject(value)) {
               response.valid = false;
-              return response;
-            }
-            if (_.isNumber(options.length)) {
-              if (_.keys(value).length !== options.length) {
-                response.valid = false;
-                response.constraints.length = false;
-              }
             }
             return response;
           };
@@ -55,7 +48,6 @@
             response = createResponse(value, 'Object');
             if (!_.isObject(value)) {
               response.valid = false;
-              return response;
             }
             return response;
           };
@@ -400,7 +392,7 @@
       var errors, numErrors;
       errors = {};
       if (!isPlainObject(map)) {
-        throw new Error('map for comparison should be a plain object');
+        throw new Error('Map for comparison should be a plain object');
       }
       _.each(map, function(validator, key) {
         var nested, nestedErrors, pathExists, response;
@@ -427,7 +419,7 @@
             });
           }
         } else {
-          throw new Error('unknown validator type');
+          throw new Error('Unknown validator type');
         }
       });
       numErrors = _.keys(errors).length;
@@ -469,7 +461,7 @@
         validator = getValidatorDelegate(validator);
       }
       return function(value) {
-        var collectionResponse, errors, numErrors, testable;
+        var collectionResponse, errors, numErrors, responses, testable, valid;
         collectionResponse = {
           valid: false,
           errors: {},
@@ -480,10 +472,18 @@
         if (!testable) {
           return collectionResponse;
         }
+        responses = _.map(value, function(item) {
+          return validator(item);
+        });
+        valid = _[method](responses, function(response) {
+          return response.valid;
+        });
+        if (valid) {
+          collectionResponse.valid = valid;
+          return collectionResponse;
+        }
         errors = {};
-        _.each(value, function(item, key) {
-          var response;
-          response = validator(item);
+        _.each(responses, function(response, key) {
           if (!response.valid) {
             return errors[key] = response;
           }

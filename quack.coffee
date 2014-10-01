@@ -41,12 +41,6 @@ Lib = do ->
                     response = createResponse(value, 'Plain Object')
                     unless isPlainObject(value)
                         response.valid = false
-                        return response
-
-                    if _.isNumber(options.length)
-                        unless _.keys(value).length is options.length
-                            response.valid = false
-                            response.constraints.length = false
                     return response
 
             object: (options) ->
@@ -55,7 +49,6 @@ Lib = do ->
                     response = createResponse(value, 'Object')
                     unless _.isObject(value)
                         response.valid = false
-                        return response
                     response
 
             number: (options) ->
@@ -322,7 +315,7 @@ Lib = do ->
         errors = {}
 
         unless isPlainObject(map)
-            throw new Error('map for comparison should be a plain object')
+            throw new Error('Map for comparison should be a plain object')
 
         _.each map, (validator, key) ->
             pathExists = hasPath(obj, key)
@@ -347,10 +340,9 @@ Lib = do ->
                     _.each nestedErrors.errors, (err, k) ->
                         errors[key + '.' + k] = err
             else
-                throw new Error('unknown validator type')
+                throw new Error('Unknown validator type')
 
         numErrors = _.keys(errors).length
-
         { valid: numErrors is 0, errors: errors, numErrors: numErrors }
 
     # Validate object
@@ -396,13 +388,25 @@ Lib = do ->
             # Allow arrays and plain objects
             testable = _.isArray(value) or isPlainObject(value)
 
+            # Quick test
             unless testable
+                return collectionResponse
+
+            # Gather responses
+            responses = _.map value, (item) ->
+                validator(item)
+
+            # Check if 'all' or 'any' are valid
+            valid = _[method] responses, (response) ->
+                response.valid
+
+            if valid
+                collectionResponse.valid = valid
                 return collectionResponse
 
             # Detect errors
             errors = {}
-            _.each value, (item, key) ->
-                response = validator(item)
+            _.each responses, (response, key) ->
                 unless response.valid
                     errors[key] = response
 
