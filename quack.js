@@ -27,7 +27,7 @@
           expected: expected,
           detected: getTypeOf(value),
           constraints: {},
-          pattern: false
+          match: false
         };
       };
       return {
@@ -162,6 +162,7 @@
                 }
               }
             });
+            response.value = value;
             response.valid = _.keys(response.difference).length === 0;
             return response;
           };
@@ -212,7 +213,7 @@
             return response;
           };
         },
-        pattern: function(regExp) {
+        match: function(regExp) {
           return function(value) {
             var response, valid;
             response = createResponse(value, 'String');
@@ -222,7 +223,7 @@
             }
             valid = regExp.test(value);
             response.pattern = regExp.toString();
-            response.patternMatch = valid;
+            response.match = valid;
             response.valid = valid;
             return response;
           };
@@ -414,7 +415,7 @@
             return errors[key] = response;
           }
         } else if (_.isRegExp(validator)) {
-          validator = validators.pattern(validator);
+          validator = validators.match(validator);
           response = validator(nested);
           response.pathExists = pathExists;
           if (!response.valid) {

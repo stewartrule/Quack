@@ -41,7 +41,7 @@
             screen_name: quack.string(),
             id: quack.integer(),
             id_str: quack.string(),
-            connections: quack.all(quack.pattern(/ollow/))
+            connections: quack.all(quack.match(/ollow/))
         })
     });
 
@@ -68,7 +68,7 @@
         events: quack.all({
             start: quack.date(),
             name: quack.string(),
-            invited: quack.all(quack.pattern(/^[A-Za-z]+$/))
+            invited: quack.all(quack.match(/^[A-Za-z]+$/))
         })
     });
 
@@ -102,7 +102,7 @@
     //inspect(response);
 
     var response = quack.validate(config, {
-        'coordinates.x': quack.all(quack.pattern(/combined/))
+        'coordinates.x': quack.all(quack.match(/combined/))
     });
 
     // inspect(response);
@@ -122,7 +122,7 @@
         'css': quack.object(),
         'css.files': quack.number(),
         js: {
-            files: quack.all(quack.pattern(/combined/))
+            files: quack.all(quack.match(/combined/))
         }
     });
 
@@ -131,7 +131,7 @@
     var response = quack.validate(config, {
         coordinates: quack.nil(),
         user: {
-            email: quack.pattern(/^\S+@\S+\_\S+$/)
+            email: quack.match(/^\S+@\S+\_\S+$/)
         },
         dom: {
             body: quack.element(),
@@ -160,7 +160,7 @@
             }
         },
         colors: {
-            header: quack.pattern(/^#?([a-f0-9]{6}|[a-f0-9]{3})$/)
+            header: quack.match(/^#?([a-f0-9]{6}|[a-f0-9]{3})$/)
         },
         'api.book.getEan': quack.func(),
         'api.book': quack.api(['getEan', 'getCosts', 'getTitleS'])

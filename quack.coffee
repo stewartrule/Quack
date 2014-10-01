@@ -30,7 +30,7 @@ Lib = do ->
                 expected: expected,
                 detected: getTypeOf(value),
                 constraints: {},
-                pattern: false
+                match: false
             }
 
         # Return validators
@@ -135,6 +135,7 @@ Lib = do ->
                                     expected: options[param]
                                 }
 
+                    response.value = value
                     response.valid = _.keys(response.difference).length is 0
                     response
 
@@ -172,7 +173,7 @@ Lib = do ->
                         response.constraints.max = false
                     response
 
-            pattern: (regExp) ->
+            match: (regExp) ->
                 (value) ->
                     response = createResponse(value, 'String')
                     unless _.isString(value)
@@ -180,7 +181,7 @@ Lib = do ->
                         return response
                     valid = regExp.test(value)
                     response.pattern = regExp.toString()
-                    response.patternMatch = valid
+                    response.match = valid
                     response.valid = valid
                     response
 
@@ -336,7 +337,7 @@ Lib = do ->
                     errors[key] = response
 
             else if _.isRegExp(validator)
-                validator = validators.pattern(validator)
+                validator = validators.match(validator)
                 response = validator(nested)
                 response.pathExists = pathExists
                 unless response.valid
