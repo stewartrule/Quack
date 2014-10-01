@@ -29,8 +29,7 @@ Lib = do ->
                 value: value,
                 expected: expected,
                 detected: getTypeOf(value),
-                constraints: {},
-                match: false
+                constraints: {}
             }
 
         # Return validators
@@ -167,10 +166,10 @@ Lib = do ->
                         return response
                     if _.isNumber(options.min) and value.length < options.min
                         response.valid = false
-                        response.constraints.min = false
-                    if _.isNumber(options.max) and value.length < options.max
+                        response.constraints.min = options.min
+                    if _.isNumber(options.max) and value.length > options.max
                         response.valid = false
-                        response.constraints.max = false
+                        response.constraints.max = options.max
                     response
 
             match: (regExp) ->
