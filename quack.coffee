@@ -33,7 +33,7 @@ Lib = do ->
             }
 
         # Return validators
-        return {
+        ret = {
 
             plainObject: (options) ->
                 options or= {}
@@ -42,14 +42,6 @@ Lib = do ->
                     unless isPlainObject(value)
                         response.valid = false
                     return response
-
-            object: (options) ->
-                options or= {}
-                (value) ->
-                    response = createResponse(value, 'Object')
-                    unless _.isObject(value)
-                        response.valid = false
-                    response
 
             number: (options) ->
                 options or= {}
@@ -82,34 +74,6 @@ Lib = do ->
                         response.constraints.max = options.max
                     response
 
-            nan: () ->
-                (value) ->
-                    response = createResponse(value, 'NaN')
-                    unless _.isNaN(value)
-                        response.valid = false
-                    response
-
-            nil: () ->
-                (value) ->
-                    response = createResponse(value, 'Null')
-                    unless _.isNull(value)
-                        response.valid = false
-                    response
-
-            undef: () ->
-                (value) ->
-                    response = createResponse(value, 'Undefined')
-                    unless _.isUndefined(value)
-                        response.valid = false
-                    response
-
-            bool: () ->
-                (value) ->
-                    response = createResponse(value, 'Boolean')
-                    unless _.isBoolean(value)
-                        response.valid = false
-                    response
-
             regExp: (options) ->
                 options or= {}
                 (value) ->
@@ -128,14 +92,6 @@ Lib = do ->
                                 }
 
                     response.valid = _.keys(response.difference).length is 0
-                    response
-
-            array: (options) ->
-                options or= {}
-                (value) ->
-                    response = createResponse(value, 'Array')
-                    unless _.isArray(value)
-                        response.valid = false
                     response
 
             func: (options) ->
@@ -196,13 +152,6 @@ Lib = do ->
                             response.constraints.max = options.max
                     response
 
-            element: () ->
-                (value) ->
-                    response = createResponse(value, 'Element')
-                    unless _.isElement(value)
-                        response.valid = false
-                    response
-
             api: (methods) ->
                 (value) ->
                     response = createResponse(value, ['Object', 'Array'])
@@ -225,6 +174,30 @@ Lib = do ->
                         response.missing = missing
                     response
         }
+
+        # Generate validators that are optionless at the moment
+        simpleValidators = {
+            object: 'Object'
+            nan: 'NaN'
+            nil: 'Null'
+            undef: 'Undefined'
+            bool: 'Boolean'
+            array: 'Array'
+            element: 'Element'
+        }
+
+        _.each simpleValidators, (type, methodName) ->
+            ret[methodName] = (options) ->
+                options or= {}
+                (value) ->
+                    response = createResponse(value, type)
+                    unless _['is' + type](value)
+                        response.valid = false
+                    response
+            return
+
+        # return validators
+        ret
 
 
     # Check if object has a key and that key holds an object

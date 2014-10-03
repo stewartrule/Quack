@@ -19,7 +19,7 @@
       return _.isObject(value) && !isObjectSubType(value);
     };
     validators = (function() {
-      var createResponse;
+      var createResponse, ret, simpleValidators;
       createResponse = function(value, expected) {
         return {
           valid: true,
@@ -29,24 +29,13 @@
           constraints: {}
         };
       };
-      return {
+      ret = {
         plainObject: function(options) {
           options || (options = {});
           return function(value) {
             var response;
             response = createResponse(value, 'Plain Object');
             if (!isPlainObject(value)) {
-              response.valid = false;
-            }
-            return response;
-          };
-        },
-        object: function(options) {
-          options || (options = {});
-          return function(value) {
-            var response;
-            response = createResponse(value, 'Object');
-            if (!_.isObject(value)) {
               response.valid = false;
             }
             return response;
@@ -93,46 +82,6 @@
             return response;
           };
         },
-        nan: function() {
-          return function(value) {
-            var response;
-            response = createResponse(value, 'NaN');
-            if (!_.isNaN(value)) {
-              response.valid = false;
-            }
-            return response;
-          };
-        },
-        nil: function() {
-          return function(value) {
-            var response;
-            response = createResponse(value, 'Null');
-            if (!_.isNull(value)) {
-              response.valid = false;
-            }
-            return response;
-          };
-        },
-        undef: function() {
-          return function(value) {
-            var response;
-            response = createResponse(value, 'Undefined');
-            if (!_.isUndefined(value)) {
-              response.valid = false;
-            }
-            return response;
-          };
-        },
-        bool: function() {
-          return function(value) {
-            var response;
-            response = createResponse(value, 'Boolean');
-            if (!_.isBoolean(value)) {
-              response.valid = false;
-            }
-            return response;
-          };
-        },
         regExp: function(options) {
           options || (options = {});
           return function(value) {
@@ -154,17 +103,6 @@
               }
             });
             response.valid = _.keys(response.difference).length === 0;
-            return response;
-          };
-        },
-        array: function(options) {
-          options || (options = {});
-          return function(value) {
-            var response;
-            response = createResponse(value, 'Array');
-            if (!_.isArray(value)) {
-              response.valid = false;
-            }
             return response;
           };
         },
@@ -245,16 +183,6 @@
             return response;
           };
         },
-        element: function() {
-          return function(value) {
-            var response;
-            response = createResponse(value, 'Element');
-            if (!_.isElement(value)) {
-              response.valid = false;
-            }
-            return response;
-          };
-        },
         api: function(methods) {
           return function(value) {
             var missing, response, valid;
@@ -287,6 +215,29 @@
           };
         }
       };
+      simpleValidators = {
+        object: 'Object',
+        nan: 'NaN',
+        nil: 'Null',
+        undef: 'Undefined',
+        bool: 'Boolean',
+        array: 'Array',
+        element: 'Element'
+      };
+      _.each(simpleValidators, function(type, methodName) {
+        ret[methodName] = function(options) {
+          options || (options = {});
+          return function(value) {
+            var response;
+            response = createResponse(value, type);
+            if (!_['is' + type](value)) {
+              response.valid = false;
+            }
+            return response;
+          };
+        };
+      });
+      return ret;
     })();
     hasObject = function(parent, key) {
       return _.has(parent, key) && _.isObject(parent[key]);
