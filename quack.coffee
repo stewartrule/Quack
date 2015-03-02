@@ -2,8 +2,6 @@
 # Kwek kwek!
 Lib = do ->
 
-    foo = 123455
-
     # List of primary types
     primaryTypes = ['Function', 'Array', 'Number', 'String', 'Boolean', 'Date', 'RegExp', 'Element', 'Null', 'Undefined', 'NaN', 'Object']
 
